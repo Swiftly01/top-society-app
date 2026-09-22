@@ -1,0 +1,30 @@
+{
+    "folders": [
+        {
+            "path": "../../../../../WEB CLASS",
+        },
+        {
+            "path": "../../../../../webclass techpro",
+        },
+        {
+            "path": "../../../../../../../../laragon/www/production",
+        },
+        {
+            "path": "../../../../../learn",
+        },
+        {
+            "path": "../../../..",
+        },
+        {
+            "path": "../../../../../mobile-development",
+        },
+        {
+            "path": "../../../../../Docker",
+        },
+    ],
+    "settings": {
+        "liveServer.settings.multiRootWorkspaceName": "webclass techpro",
+        "php.version": "8.2",
+        "git.ignoreLimitWarning": true,
+    },
+}
