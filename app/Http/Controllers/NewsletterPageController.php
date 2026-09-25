@@ -2,66 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Presenters\NewsletterPresenter;
+use App\Repositories\Contracts\NewsletterEditionRepositoryInterface;
+use App\Repositories\Contracts\NewsletterRepositoryInterface;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NewsletterPageController extends Controller
 {
+    public function __construct(
+        protected NewsletterRepositoryInterface $newsletters,
+        protected NewsletterEditionRepositoryInterface $editions,
+    ) {}
+
     public function index(): Response
     {
         return Inertia::render('newsletter/index', [
             'heading' => 'Curated Journalism, Delivered.',
             'subheading' => 'Select from our flagship newsletters for deep dives, daily briefings, and weekend reflections crafted by our expert editors.',
 
-            'plans' => [
-                [
-                    'id' => 'daily-briefing',
-                    'badge' => 'Daily',
-                    'title' => 'Daily Briefing',
-                    'description' => 'The essential stories to start your day. Politics, global affairs, and market movements synthesized for clarity.',
-                    'previewHref' => '/newsletter/daily-briefing/preview',
-                ],
-                [
-                    'id' => 'tech-weekly',
-                    'badge' => 'Weekly',
-                    'title' => 'Tech Weekly',
-                    'description' => 'Cutting-edge analysis on innovation, artificial intelligence, and the business of silicon. Delivered every Thursday.',
-                    'previewHref' => '/newsletter/tech-weekly/preview',
-                ],
-                [
-                    'id' => 'weekend-review',
-                    'badge' => 'Weekend',
-                    'title' => 'The Weekend Review',
-                    'description' => 'Long-form journalism, cultural essays, and deep reflections for your Sunday morning coffee reading.',
-                    'previewHref' => '/newsletter/weekend-review/preview',
-                ],
-            ],
+            'plans' => $this->newsletters->activeOrdered()
+                ->map(fn ($newsletter) => NewsletterPresenter::toPlan($newsletter))
+                ->all(),
 
-            'archive' => [
-                [
-                    'id' => 1,
-                    'date' => 'Nov 12, 2024',
-                    'newsletterName' => 'Daily Briefing',
-                    'title' => 'The Economic Pivot and Global Markets',
-                    'href' => '/newsletter/archive/economic-pivot-global-markets',
-                ],
-                [
-                    'id' => 2,
-                    'date' => 'Nov 09, 2024',
-                    'newsletterName' => 'The Weekend Review',
-                    'title' => 'Architecture in the Age of Climate Change',
-                    'href' => '/newsletter/archive/architecture-climate-change',
-                ],
-                [
-                    'id' => 3,
-                    'date' => 'Nov 07, 2024',
-                    'newsletterName' => 'Tech Weekly',
-                    'title' => 'Regulating the Algorithm: New EU Directives',
-                    'href' => '/newsletter/archive/regulating-algorithm-eu',
-                ],
-            ],
+            'archive' => $this->editions->recentSent(3)
+                ->map(fn ($edition) => NewsletterPresenter::toArchiveEntry($edition))
+                ->all(),
 
-            'archiveHref' => '/newsletter/archive',
+            'archiveHref' => route('newsletter.archive.index'),
         ]);
+    }
+
+    /**
+     * "Preview Latest Edition" on a newsletter's signup card — there's no
+     * standalone preview page; this just finds that newsletter's most
+     * recently sent edition and forwards to its normal archive page. 404s
+     * if the newsletter doesn't exist or hasn't sent anything yet, rather
+     * than silently landing on a blank page.
+     */
+    public function preview(string $newsletter): RedirectResponse
+    {
+        $newsletterModel = $this->newsletters->findBySlug($newsletter);
+
+        if (! $newsletterModel) {
+            throw new NotFoundHttpException();
+        }
+
+        $edition = $this->editions->latestSentFor($newsletterModel->id);
+
+        if (! $edition) {
+            throw new NotFoundHttpException();
+        }
+
+        return redirect()->route('newsletter.archive.show', $edition->slug);
     }
 }

@@ -47,6 +47,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermissionName::ManageUsers->value,
             PermissionName::ManageSponsoredContent->value,
             PermissionName::ManageTeamMembers->value,
+            PermissionName::ManageMagazines->value,
             
         ]);
 
@@ -66,6 +67,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermissionName::ManageMedia->value,
             PermissionName::ManageSponsoredContent->value,
             PermissionName::ManageTeamMembers->value,
+            PermissionName::ManageMagazines->value,
         ]);
 
         // Author — can create and manage their *own* content only

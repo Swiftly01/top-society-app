@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import { CategoryNewsSections } from "@/components/home/category-news-sections";
 import { DailyBriefing } from "@/components/home/daily-briefing";
 import { HeroSection } from "@/components/home/hero-section";
 import { LatestReporting } from "@/components/home/latest-reporting";
@@ -12,12 +13,14 @@ export default function Home(props: HomePageProps) {
         activeNav,
         featuredArticles,
         secondaryHeadlines,
+        latestMagazine,
         partnership,
         categoryFilters,
         activeCategory,
         latestArticles,
         mostRead,
         mostReadPromo,
+        categorySections,
         newsletter,
     } = props;
 
@@ -32,6 +35,7 @@ export default function Home(props: HomePageProps) {
                     <HeroSection
                         featuredArticles={featuredArticles}
                         secondaryHeadlines={secondaryHeadlines}
+                        latestMagazine={latestMagazine}
                     />
 
                     {/* <PartnershipDossier partnership={partnership} /> */}
@@ -46,6 +50,8 @@ export default function Home(props: HomePageProps) {
                         mostRead={mostRead}
                         mostReadPromo={mostReadPromo}
                     />
+
+                    <CategoryNewsSections sections={categorySections} />
 
                     <DailyBriefing newsletter={newsletter} />
                 </main>

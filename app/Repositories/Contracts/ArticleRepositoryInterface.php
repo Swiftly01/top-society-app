@@ -63,4 +63,9 @@ interface ArticleRepositoryInterface extends RepositoryInterface
     public function dueForPublishing(): Collection;
 
     public function slugExists(string $slug, ?int $exceptId = null): bool;
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function suggest(string $term, int $limit = 5): Collection;
 }

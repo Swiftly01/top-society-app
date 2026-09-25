@@ -21,4 +21,14 @@ interface CategoryRepositoryInterface extends RepositoryInterface
      * @return Collection<int, Category>
      */
     public function tree(): Collection;
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function suggest(string $term, int $limit = 3): Collection;
+
+    /**
+ * @return Collection<int, Category>
+ */
+public function primaryNav(): Collection;
 }

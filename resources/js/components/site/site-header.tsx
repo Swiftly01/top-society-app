@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useSiteNavigation } from "@/hooks/use-site-navigation";
 import { cn } from "@/lib/utils";
+import { SearchModal } from "@/components/search/search-modal";
 
 interface SiteHeaderProps {
     activeNav: string;
@@ -22,6 +23,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
         useSiteNavigation();
     const items = nav === "section" ? sectionNavItems : navItems;
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
 
     return (
         <header className="border-b border-border bg-background">
@@ -49,8 +51,14 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                             </SheetTrigger>
                             <SheetContent side="left" className="w-72">
                                 <SheetHeader>
-                                    <SheetTitle className="font-serif text-xl">
-                                        Top Society
+                                    <SheetTitle asChild>
+                                        <Link href="/" onClick={() => setMobileOpen(false)}>
+                                            <img
+                                                src="/images/top-society-logo.png"
+                                                alt="Top Society"
+                                                className="h-9 w-auto"
+                                            />
+                                        </Link>
                                     </SheetTitle>
                                 </SheetHeader>
                                 <nav className="flex flex-col gap-1 px-4 pb-6">
@@ -77,9 +85,11 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                     {/* Logo */}
                     <div className="col-start-2 text-center lg:col-start-1 lg:text-left">
                         <Link href="/" className="inline-block">
-                            <span className="font-serif text-2xl font-bold tracking-tight sm:text-3xl">
-                                Top Society
-                            </span>
+                            <img
+                                src="/images/top-society-logo.png"
+                                alt="Top Society"
+                                className="h-12 w-auto sm:h-14"
+                            />
                         </Link>
                         <p className="hidden text-[11px] tracking-[0.2em] text-muted-foreground uppercase lg:block">
                             Nigeria &amp; Global Journal of Authority
@@ -88,7 +98,12 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
 
                     {/* Actions */}
                     <div className="col-start-3 flex items-center justify-end gap-1 lg:col-start-3">
-                        <Button variant="ghost" size="icon" aria-label="Search">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Search"
+                            onClick={() => setSearchOpen(true)}
+                        >
                             <Search className="size-4" />
                         </Button>
                         <Button
@@ -125,6 +140,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                     ))}
                 </div>
             </nav>
+            <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
         </header>
     );
 }

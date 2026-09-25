@@ -17,6 +17,25 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
         parent::__construct($model);
     }
 
+    public function suggest(string $term, int $limit = 3): Collection
+    {
+        return $this->query()
+            ->where('name', 'like', "%{$term}%")
+            ->inPrimaryNav()
+            ->orderBy('order')
+            ->limit($limit)
+            ->get();
+    }
+
+    public function primaryNav(): Collection
+    {
+        return $this->query()
+            ->topLevel()
+            ->inPrimaryNav()
+            ->orderBy('order')
+            ->get();
+    }
+
     public function findBySlug(string $slug): ?Category
     {
         return $this->query()->where('slug', $slug)->first();
@@ -26,7 +45,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     {
         return $this->model->newQuery()
             ->where('slug', $slug)
-            ->when($exceptId, fn (Builder $q) => $q->where('id', '!=', $exceptId))
+            ->when($exceptId, fn(Builder $q) => $q->where('id', '!=', $exceptId))
             ->exists();
     }
 

@@ -1,13 +1,16 @@
 import { Link } from '@inertiajs/react';
 import { HeroCarousel } from '@/components/home/hero-carousel';
-import type { Article, FeaturedArticle } from '@/types/content';
+import { MagazineCard } from '@/components/home/magazine-card';
+import type { Article, FeaturedArticle, Magazine } from '@/types/content';
 
 interface HeroSectionProps {
     featuredArticles: FeaturedArticle[];
     secondaryHeadlines: Article[];
+    /** Null hides the card — nothing to show until an issue is published. */
+    latestMagazine?: Magazine | null;
 }
 
-export function HeroSection({ featuredArticles, secondaryHeadlines }: HeroSectionProps) {
+export function HeroSection({ featuredArticles, secondaryHeadlines, latestMagazine }: HeroSectionProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-3">
@@ -18,6 +21,7 @@ export function HeroSection({ featuredArticles, secondaryHeadlines }: HeroSectio
 
                 {/* Secondary headlines */}
                 <div className="flex flex-col divide-y divide-border">
+                    {latestMagazine && <MagazineCard magazine={latestMagazine} />}
                     {secondaryHeadlines.map((article) => (
                         <Link
                             key={article.id}

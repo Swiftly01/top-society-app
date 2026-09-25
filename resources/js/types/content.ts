@@ -69,6 +69,32 @@ export interface CategoryFilter {
     value: string;
 }
 
+/** The current live magazine issue — homepage cover card, click-to-download. */
+export interface Magazine {
+    id: number | string;
+    title: string;
+    issueLabel?: string | null;
+    description?: string | null;
+    /** Absolute or storage-relative cover image URL. */
+    coverImage?: string | null;
+    /** Null when no PDF has been uploaded yet — the card should hide its download affordance. */
+    downloadHref?: string | null;
+    publishedAt?: string | null;
+}
+
+/**
+ * One category's "News by Category" card row. `articles` is capped
+ * server-side (see HomeController::ARTICLES_PER_CATEGORY_SECTION); this
+ * shape doesn't change as categories are added, renamed, or reordered in
+ * the admin — the section list itself grows/shrinks instead.
+ */
+export interface CategorySection {
+    label: string;
+    slug: string;
+    href: string;
+    articles: Article[];
+}
+
 export interface NewsletterSection {
     title: string;
     description: string;
@@ -113,6 +139,8 @@ export interface HomePageProps {
     /** Rotates through the homepage hero carousel — 2 to 5 slides is the sweet spot. */
     featuredArticles: FeaturedArticle[];
     secondaryHeadlines: Article[];
+    /** Null when no issue has been published yet — the magazine card is hidden. */
+    latestMagazine: Magazine | null;
     /** Null when no placement is currently featured and active — the whole Partnership Dossier section is hidden. */
     partnership: PartnershipSection | null;
     categoryFilters: CategoryFilter[];
@@ -120,5 +148,7 @@ export interface HomePageProps {
     latestArticles: Article[];
     mostRead: MostReadArticle[];
     mostReadPromo: PromoCard;
+    /** One row per category with published stories — see CategoryNewsSections. */
+    categorySections: CategorySection[];
     newsletter: NewsletterSection;
 }

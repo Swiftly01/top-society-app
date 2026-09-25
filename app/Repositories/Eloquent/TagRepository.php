@@ -18,6 +18,15 @@ class TagRepository extends BaseRepository implements TagRepositoryInterface
         parent::__construct($model);
     }
 
+    public function suggest(string $term, int $limit = 5): Collection
+{
+    return $this->query()
+        ->where('name', 'like', "%{$term}%")
+        ->orderBy('name')
+        ->limit($limit)
+        ->get();
+}
+
     public function findBySlug(string $slug): ?Tag
     {
         return $this->query()->where('slug', $slug)->first();

@@ -29,9 +29,13 @@ enum PermissionName: string
     case ManageSponsoredContent = 'manage_sponsored_content';
     case ManageTeamMembers = 'manage_team_members';
 
+      case ManageMagazines = 'manage_magazines';
+
     // Users & roles
     case ManageUsers = 'manage_users';
     case ManageRoles = 'manage_roles';
+
+    case ManageNewsletters = 'manage_newsletters';
 
     /**
      * @return array<int, string>

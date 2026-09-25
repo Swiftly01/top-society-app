@@ -22,3 +22,10 @@ export interface NewsletterPageProps {
     archive: NewsletterArchiveEntry[];
     archiveHref: string;
 }
+
+/** Page-specific prop contract for `newsletter/archive` — the full, paginated back-issues list. */
+export interface NewsletterArchivePageProps {
+    entries: NewsletterArchiveEntry[];
+    currentPage: number;
+    lastPage: number;
+}

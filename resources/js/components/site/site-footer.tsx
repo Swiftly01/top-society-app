@@ -25,7 +25,13 @@ export function SiteFooter() {
         <footer className="bg-neutral-950 text-neutral-400">
             <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-5 lg:px-8">
                 <div className="lg:col-span-1">
-                    <span className="font-serif text-xl font-bold text-white">{footer.brandName}</span>
+                    <Link href="/" className="inline-block">
+                        <img
+                            src="/images/top-society-logo.png"
+                            alt={footer.brandName}
+                            className="h-10 w-auto"
+                        />
+                    </Link>
                     <p className="mt-1 text-xs font-semibold tracking-widest text-red-500 uppercase">
                         {footer.editionLabel}
                     </p>

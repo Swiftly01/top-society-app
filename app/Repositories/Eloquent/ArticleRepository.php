@@ -26,6 +26,15 @@ class ArticleRepository extends BaseRepository implements ArticleRepositoryInter
         return parent::query()->with(['category', 'author', 'tags', 'featuredImage']);
     }
 
+    public function suggest(string $term, int $limit = 5): Collection
+{
+    return $this->query()
+        ->published()
+        ->search($term)
+        ->limit($limit)
+        ->get();
+}
+
     public function findBySlug(string $slug): ?Article
     {
         return $this->query()->where('slug', $slug)->first();

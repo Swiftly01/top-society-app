@@ -17,6 +17,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use UnitEnum;
@@ -59,6 +61,10 @@ class CategoryResource extends Resource
             TextInput::make('order')
                 ->numeric()
                 ->default(0),
+            Toggle::make('show_in_primary_nav')
+    ->label('Show in Primary Navigation')
+    ->default(true)
+    ->helperText('Controls whether this appears in the site header nav. Subcategories are never shown in nav regardless of this setting.'),
         ]);
     }
 
@@ -69,6 +75,7 @@ class CategoryResource extends Resource
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('parent.name')->label('Parent'),
+                IconColumn::make('show_in_primary_nav')->boolean()->label('In Nav'),
                 TextColumn::make('articles_count')->counts('articles')->label('Articles'),
             ])
             ->recordActions([

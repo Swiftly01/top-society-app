@@ -22,4 +22,9 @@ interface TagRepositoryInterface extends RepositoryInterface
      * @return Collection<int, Tag>
      */
     public function findOrCreateByNames(array $names): Collection;
+
+    /**
+ * @return Collection<int, Tag>
+ */
+public function suggest(string $term, int $limit = 5): Collection;
 }

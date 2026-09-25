@@ -35,6 +35,20 @@ class ArticlePresenter
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public static function toSuggestion(Article $article): array
+    {
+        return [
+            'id' => $article->id,
+            'title' => $article->title,
+            'category' => $article->category?->name ?? 'Uncategorized',
+            'image' => $article->featuredImage?->url,
+            'href' => self::hrefFor($article),
+        ];
+    }
+
+    /**
      * Matches resources/js/types/content.ts `FeaturedArticle` — a card
      * plus the hero carousel's overlay badge.
      *
@@ -147,11 +161,11 @@ class ArticlePresenter
     protected static function formatViews(int $count): string
     {
         if ($count >= 1_000_000) {
-            return round($count / 1_000_000, 1).'M views';
+            return round($count / 1_000_000, 1) . 'M views';
         }
 
         if ($count >= 1_000) {
-            return round($count / 1_000, 1).'k views';
+            return round($count / 1_000, 1) . 'k views';
         }
 
         return "{$count} views";

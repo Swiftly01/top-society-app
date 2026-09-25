@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\ArticleStatus;
+use App\Jobs\DispatchArticlePublishedNotificationsJob;
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Contracts\TagRepositoryInterface;
@@ -35,6 +36,9 @@ class ArticleService
             return $article;
         });
     }
+    
+
+    
 
     /**
      * @param  array<string, mixed>  $attributes
@@ -74,11 +78,22 @@ class ArticleService
      */
     public function publish(Article $article): Article
     {
-        return $this->articles->update($article, [
-            'status' => ArticleStatus::Published->value,
-            'published_at' => $article->published_at ?? now(),
-            'scheduled_for' => null,
-        ]);
+        $wasAlreadyPublished = $article->status === ArticleStatus::Published;
+
+    $article = $this->articles->update($article, [
+        'status' => ArticleStatus::Published->value,
+        'published_at' => $article->published_at ?? now(),
+        'scheduled_for' => null,
+    ]);
+
+    // Only notify on the transition into Published, not on every
+    // subsequent unrelated edit to an already-published article — this
+    // check is what stops "admin fixes a typo" from re-emailing everyone.
+    if (! $wasAlreadyPublished) {
+        DispatchArticlePublishedNotificationsJob::dispatch($article->id);
+    }
+
+    return $article;
     }
 
     public function unpublish(Article $article): Article

@@ -145,7 +145,14 @@ class Article extends Model
 
     public function scopeSearch(Builder $query, string $term): Builder
     {
-        return $query->where('title', 'like', "%{term}%")->orWhere('excerpt', 'like', '%{excerpt}%');
+        $term = trim($term);
+
+        return $query->where(function (Builder $q) use ($term) {
+            if (mb_strlen($term) >= 3) {
+                $q->whereFullText(['title', 'excerpt'], $term . '*', ['mode' => 'boolean']);
+            }
+            $q->orWhere('title', 'like', "%{$term}%");
+        });
     }
 
     // --- Convenience accessors ---------------------------------------

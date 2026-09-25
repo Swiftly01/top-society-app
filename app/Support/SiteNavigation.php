@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Repositories\Contracts\CategoryRepositoryInterface;
+
 /**
  * Builds the `site` object shared on every Inertia request (see
  * `HandleInertiaRequests::share()`). Centralizing nav/footer here means
@@ -14,17 +16,18 @@ namespace App\Support;
  */
 class SiteNavigation
 {
+    public function __construct(protected CategoryRepositoryInterface $categories) {}
     /**
      * @return array<string, mixed>
      */
-    public static function shared(): array
+    public  function shared(): array
     {
         return [
             'editionDate' => now()->format('l, F j, Y'),
             'editionLabel' => 'Nigeria & Global',
-            'navItems' => self::navItems(),
-            'sectionNavItems' => self::sectionNavItems(),
-            'footer' => self::footer(),
+            'navItems' => $this->navItems(),
+            'sectionNavItems' => $this->sectionNavItems(),
+            'footer' => $this->footer(),
         ];
     }
 
@@ -33,17 +36,30 @@ class SiteNavigation
      *
      * @return array<int, array{label: string, href: string}>
      */
-    public static function navItems(): array
+    // public static function navItems(): array
+    // {
+    //     return [
+    //         ['label' => 'Home', 'href' => '/'],
+    //         ['label' => 'Politics', 'href' => '/politics'],
+    //         ['label' => 'The Nation', 'href' => '/the-nation'],
+    //         ['label' => 'Business', 'href' => '/business'],
+    //         ['label' => 'International', 'href' => '/international'],
+    //         ['label' => 'Entertainment', 'href' => '/entertainment'],
+    //         ['label' => 'Sport', 'href' => '/sport'],
+    //         ['label' => 'Lifestyle', 'href' => '/lifestyle'],
+    //     ];
+    // }
+
+    public function navItems(): array
     {
         return [
             ['label' => 'Home', 'href' => '/'],
-            ['label' => 'Politics', 'href' => '/politics'],
-            ['label' => 'The Nation', 'href' => '/the-nation'],
-            ['label' => 'Business', 'href' => '/business'],
-            ['label' => 'International', 'href' => '/international'],
-            ['label' => 'Entertainment', 'href' => '/entertainment'],
-            ['label' => 'Sport', 'href' => '/sport'],
-            ['label' => 'Lifestyle', 'href' => '/lifestyle'],
+            ...$this->categories->primaryNav()
+                ->map(fn($category) => [
+                    'label' => $category->name,
+                    'href' => "/categories/{$category->slug}",
+                ])
+                ->all(),
         ];
     }
 
@@ -52,15 +68,26 @@ class SiteNavigation
      *
      * @return array<int, array{label: string, href: string}>
      */
-    public static function sectionNavItems(): array
+    // public static function sectionNavItems(): array
+    // {
+    //     return [
+    //         ['label' => 'Politics', 'href' => '/politics'],
+    //         ['label' => 'Tech', 'href' => '/categories/technology'],
+    //         ['label' => 'Business', 'href' => '/business'],
+    //         ['label' => 'Culture', 'href' => '/categories/culture'],
+    //         ['label' => 'Science', 'href' => '/categories/science'],
+    //     ];
+    // }
+
+      public function sectionNavItems(): array
     {
-        return [
-            ['label' => 'Politics', 'href' => '/politics'],
-            ['label' => 'Tech', 'href' => '/categories/technology'],
-            ['label' => 'Business', 'href' => '/business'],
-            ['label' => 'Culture', 'href' => '/categories/culture'],
-            ['label' => 'Science', 'href' => '/categories/science'],
-        ];
+        return $this->categories->primaryNav()
+            ->take(5)
+            ->map(fn ($category) => [
+                'label' => $category->name,
+                'href' => "/categories/{$category->slug}",
+            ])
+            ->all();
     }
 
     /**
@@ -80,10 +107,10 @@ class SiteNavigation
                         ['label' => 'Newsletter', 'href' => '/newsletter'],
                         ['label' => "Editor's Picks", 'href' => '/editors-picks'],
                         ['label' => 'Search', 'href' => '/search'],
-                    //    ['label' => 'Videos & Documentaries', 'href' => '/videos'],
-                    //    ['label' => 'Podcasts', 'href' => '/podcasts'],
-                    //    ['label' => 'Photo Stories', 'href' => '/photo-stories'],
-                    //    ['label' => 'Special Reports', 'href' => '/special-reports'],
+                        //    ['label' => 'Videos & Documentaries', 'href' => '/videos'],
+                        //    ['label' => 'Podcasts', 'href' => '/podcasts'],
+                        //    ['label' => 'Photo Stories', 'href' => '/photo-stories'],
+                        //    ['label' => 'Special Reports', 'href' => '/special-reports'],
                     ],
                 ],
                 [
@@ -92,8 +119,8 @@ class SiteNavigation
                         ['label' => 'About Us', 'href' => '/about'],
                         ['label' => 'Careers', 'href' => '/contact'],
                         ['label' => 'Contact Us', 'href' => '/contact'],
-                    //    ['label' => 'Advertise With Us', 'href' => '/advertise'],
-                    //    ['label' => 'Brand Studio', 'href' => '/brand-studio'],
+                        //    ['label' => 'Advertise With Us', 'href' => '/advertise'],
+                        //    ['label' => 'Brand Studio', 'href' => '/brand-studio'],
                     ],
                 ],
                 [
@@ -101,14 +128,14 @@ class SiteNavigation
                     'links' => [
                         ['label' => 'Privacy Policy', 'href' => '/legal/privacy-policy'],
                         ['label' => 'Terms of Service', 'href' => '/legal/terms-of-service'],
-                       // ['label' => 'Ethics & Standards', 'href' => '/ethics'],
-                       // ['label' => 'Editorial Archives', 'href' => '/archives'],
+                        // ['label' => 'Ethics & Standards', 'href' => '/ethics'],
+                        // ['label' => 'Editorial Archives', 'href' => '/archives'],
                     ],
                 ],
             ],
             'newsletterHeading' => 'Subscribe',
             'newsletterCtaLabel' => 'Subscribe',
-            'copyright' => '© '.now()->year.' Top Society. All Rights Reserved.',
+            'copyright' => '© ' . now()->year . ' Top Society. All Rights Reserved.',
             'editions' => ['Lagos', 'Abuja', 'London', 'New York'],
         ];
     }
