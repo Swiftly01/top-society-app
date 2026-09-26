@@ -60,7 +60,15 @@ class Media extends Model
      */
     public function formattedSize(): string
     {
-        $bytes = $this->size;
+        return static::formatBytes($this->size);
+    }
+
+    /**
+     * Shared by formattedSize() above and the dashboard's media-storage
+     * stat card, so the two never drift into different rounding/units.
+     */
+    public static function formatBytes(int $bytes): string
+    {
         $units = ['B', 'KB', 'MB', 'GB'];
 
         for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
