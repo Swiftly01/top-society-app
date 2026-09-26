@@ -5,6 +5,8 @@
     "scripts": {
         "build": "php artisan wayfinder:generate && vite build",
         "build:ssr": "php artisan wayfinder:generate && vite build && vite build --ssr",
+        "build:prod": "RAYON_NUM_THREADS=1 php artisan wayfinder:generate && vite build",
+        "build:prod:ssr": "RAYON_NUM_THREADS=1 php artisan wayfinder:generate && vite build && vite build --ssr",
         "dev": "vp dev",
         "check": "vp check",
         "check:fix": "vp check --fix",
