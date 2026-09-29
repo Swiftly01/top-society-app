@@ -13,36 +13,38 @@ class AboutController extends Controller
     public function index(): Response
     {
         return Inertia::render('about/index', [
-            'eyebrow' => 'Est. 2014 · Abuja · Lagos · London',
+            'eyebrow' => 'Est. 2014 · Nigeria & Global',
             'breadcrumbLabel' => 'About the Society',
             'headingLead' => 'Truth, Distinction, and',
             'headingEmphasis' => 'Uncompromising Journalism.',
 
             'quote' => [
-                'text' => 'We exist not merely to report the passing hour, but to interrogate power, curate distinction, and hold a flawless mirror to African prominence on the global stage.',
-                'attribution' => 'The Editorial Board, Foundation Charter',
+                'text' => 'Your rights stop where your fellow citizen\'s begins.',
+                'attribution' => 'Top Society Founding Editorial Philosophy',
             ],
 
             'manifesto' => [
                 [
-                    'heading' => 'The Mandate',
-                    'body' => 'Operating with fierce independence, our newsroom produces peerless long-form inquiries, private market analysis, and definitive accounts of influential figures shaping the Sub-Saharan trajectory.',
+                    'heading' => 'Mission',
+                    'body' => 'We are committed to highlighting everyday issues and stories that matter most, even as we bring diverse perspectives for shared humanity with our various touchpoints getting readers well informed, educated and inspired for societal good. Our team of dedicated and experienced journalists are driven by the need to hold the most powerful accountable for their policy-making engagements; exploring the rights and wrongs as they impact the system; giving a voice to the less privileged; while offering readers a platform to announce their concerns, celebrate their community and their accomplishments, and promote their cultural ideals.',
                 ],
                 [
-                    'heading' => 'The Standard',
-                    'body' => 'Every dispatched sentence adheres to three-tier verification protocols, forensic sourcing mandates, and strict firewalls between our journalistic bureau and commercial patronage.',
+                    'heading' => 'Vision',
+                    'body' => 'Top Society\'s vision is to be a Culture Mover, generating and publishing content that shape society into one that caters for everybody, offering opportunities that enable those in the lower rung to get to the top society. This is in order for everyone to be who they want to be!',
                 ],
             ],
 
             'dossier' => [
-                'label' => 'Archive Code: 01 · Documented History',
+                'label' => 'Est. August 2014 · Documented History',
                 'title' => "Institutional Dossier",
-                'body' => "TOP SOCIETY is Nigeria's authoritative chronicle of statecraft, high enterprise, and transformative contemporary culture.",
+                'body' => 'Since August 2014 when the news magazine was floated by its publisher, Agwazim Isaac Ifeanyichukwu, our team of professional journalists and contributors have pursued and published stories that deepen social justice and cohesion. We have an independent editorial outlook and provide unparalleled collection of news content spanning the latest headlines, video, audio, and current affairs.',
                 'meta' => [
-                    ['label' => 'Bureau Clearance', 'value' => 'A1'],
-                    ['label' => 'Status', 'value' => 'Verified Asset'],
+                    ['label' => 'Founded', 'value' => 'August 2014'],
+                    ['label' => 'Publisher', 'value' => 'Agwazim Isaac Ifeanyichukwu'],
                 ],
             ],
+
+            'contentOfferings' => $this->contentOfferings(),
 
             'stats' => [
                 'eyebrow' => 'Measurable Impact',
@@ -139,6 +141,30 @@ class AboutController extends Controller
                 ],
             ],
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function contentOfferings(): array
+    {
+        return [
+            'eyebrow' => 'Our Content Offerings',
+            'heading' => 'Here Are What We Cover',
+            'description' => 'At Top Society, we don\'t just cover stories; we bring them to life with depth, balance, and purpose all within the ambit of the highest ethos of journalism — bridging the gap between cultures, communities, and continents.',
+            'items' => [
+                ['number' => '01', 'title' => 'Breaking News', 'description' => 'Stay up-to-date with the latest events as they unfold locally and internationally. From politics and business to cultural milestones, we bring you timely and accurate updates that matter.'],
+                ['number' => '02', 'title' => 'Development Journalism', 'description' => 'We seek to serve underserved communities, bringing what goes on in rural communities to the front burner so folks in the countryside feel a sense of belonging, promoting accountability and inspiring action.'],
+                ['number' => '03', 'title' => 'Politics and Governance', 'description' => 'From election updates to policy analysis, we provide balanced and objective reporting on political developments across Africa and around the globe.'],
+                ['number' => '04', 'title' => 'Business and Economy', 'description' => 'We analyze economic trends, market movements, and business innovations, keeping you informed about the forces driving growth and development in Africa and beyond.'],
+                ['number' => '05', 'title' => 'Culture and Lifestyle', 'description' => 'Explore stories that celebrate diversity, creativity, and the unique ways people live and thrive — including art, entertainment, fashion, health, and wellness.'],
+                ['number' => '06', 'title' => 'Technology and Innovation', 'description' => 'Discover the breakthroughs shaping the future — we highlight Africa\'s role in global technological advancements and the innovations transforming everyday life.'],
+                ['number' => '07', 'title' => 'Environment and Climate Change', 'description' => 'We spotlight stories about the environment, sustainability, and the challenges posed by climate change, inspiring action and awareness for a greener tomorrow.'],
+                ['number' => '08', 'title' => 'Human Interest Stories', 'description' => 'We believe in the power of storytelling. Our human-interest stories shed light on inspiring individuals, untold experiences, and the resilience of people across the continent and the world.'],
+                ['number' => '09', 'title' => 'Global Affairs', 'description' => 'Understanding the world starts with understanding its connections — we provide in-depth coverage of global events and their impact on Africa.'],
+                ['number' => '10', 'title' => 'Sports, Entertainment and Achievements', 'description' => 'Celebrate victories, milestones, and the spirit of competition. Our sports section covers local and international events, plus showbiz and celebrity lifestyle.'],
+            ],
+        ];
     }
 
     /**

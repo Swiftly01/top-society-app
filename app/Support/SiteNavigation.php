@@ -128,8 +128,8 @@ class SiteNavigation
                     'links' => [
                         ['label' => 'Privacy Policy', 'href' => '/legal/privacy-policy'],
                         ['label' => 'Terms of Service', 'href' => '/legal/terms-of-service'],
-                        // ['label' => 'Ethics & Standards', 'href' => '/ethics'],
-                        // ['label' => 'Editorial Archives', 'href' => '/archives'],
+                        ['label' => 'Advertising Policy', 'href' => '/legal/advertising-policy'],
+                        ['label' => 'Editorial Guidelines', 'href' => '/legal/editorial-guidelines'],
                     ],
                 ],
             ],

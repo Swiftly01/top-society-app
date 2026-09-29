@@ -31,11 +31,12 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-[11px] tracking-wide text-muted-foreground sm:px-6 lg:px-8">
                 <span className="uppercase">{editionDate}</span>
                 <span className="hidden font-medium text-red-600 uppercase sm:inline">
-                    Edition: {editionLabel}
+                    {/* Edition: {editionLabel} */}
+                    People, Events and Places
                 </span>
             </div>
 
-            <div className="mx-auto max-w-7xl border-t border-border px-4 py-4 sm:px-6 lg:px-8">
+            <div className="px-4 py-4 mx-auto border-t max-w-7xl border-border sm:px-6 lg:px-8">
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
                     {/* Mobile menu trigger */}
                     <div className="flex items-center lg:hidden">
@@ -56,7 +57,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                                             <img
                                                 src="/images/top-society-logo.png"
                                                 alt="Top Society"
-                                                className="h-9 w-auto"
+                                                className="w-auto h-9"
                                             />
                                         </Link>
                                     </SheetTitle>
@@ -88,7 +89,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                             <img
                                 src="/images/top-society-logo.png"
                                 alt="Top Society"
-                                className="h-12 w-auto sm:h-14"
+                                className="w-auto h-12 sm:h-14"
                             />
                         </Link>
                         <p className="hidden text-[11px] tracking-[0.2em] text-muted-foreground uppercase lg:block">
@@ -97,7 +98,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                     </div>
 
                     {/* Actions */}
-                    <div className="col-start-3 flex items-center justify-end gap-1 lg:col-start-3">
+                    <div className="flex items-center justify-end col-start-3 gap-1 lg:col-start-3">
                         <Button
                             variant="ghost"
                             size="icon"
@@ -123,7 +124,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
 
             {/* Primary nav — desktop */}
             <nav className="hidden border-t border-border lg:block">
-                <div className="mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center gap-6 px-4 mx-auto overflow-x-auto max-w-7xl sm:px-6 lg:px-8">
                     {items.map((item) => (
                         <Link
                             key={item.href}

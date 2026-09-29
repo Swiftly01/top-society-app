@@ -11,6 +11,12 @@ export interface AboutPillar {
     footerNote: string;
 }
 
+export interface AboutContentOffering {
+    number: string;
+    title: string;
+    description: string;
+}
+
 export interface TeamMember {
     id: number | string;
     name: string;
@@ -40,6 +46,12 @@ export interface AboutPageProps {
         title: string;
         body: string;
         meta: { label: string; value: string }[];
+    };
+    contentOfferings: {
+        eyebrow: string;
+        heading: string;
+        description: string;
+        items: AboutContentOffering[];
     };
     stats: {
         eyebrow: string;

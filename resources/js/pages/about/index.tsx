@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { ChronicleTimeline } from '@/components/about/chronicle-timeline';
+import { ContentOfferingsGrid } from '@/components/about/content-offerings-grid';
 import { PillarsGrid } from '@/components/about/pillars-grid';
 import { StatsBand } from '@/components/about/stats-band';
 import { TeamSlider } from '@/components/about/team-slider';
@@ -15,8 +16,20 @@ import {
 import type { AboutPageProps } from '@/types/about';
 
 export default function AboutIndex(props: AboutPageProps) {
-    const { eyebrow, breadcrumbLabel, headingLead, headingEmphasis, quote, manifesto, dossier, stats, pillars, team, chronicle } =
-        props;
+    const {
+        eyebrow,
+        breadcrumbLabel,
+        headingLead,
+        headingEmphasis,
+        quote,
+        manifesto,
+        dossier,
+        contentOfferings,
+        stats,
+        pillars,
+        team,
+        chronicle,
+    } = props;
 
     return (
         <>
@@ -26,8 +39,8 @@ export default function AboutIndex(props: AboutPageProps) {
                 <SiteHeader activeNav="Home" />
 
                 <main>
-                    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-                        <div className="flex flex-col gap-2 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+                    <section className="px-4 py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                        <div className="flex flex-col gap-2 pb-4 border-b border-border sm:flex-row sm:items-center sm:justify-between">
                             <span className="text-[11px] font-semibold tracking-widest text-red-600 uppercase">
                                 {eyebrow}
                             </span>
@@ -50,18 +63,18 @@ export default function AboutIndex(props: AboutPageProps) {
 
                         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
                             <div>
-                                <h1 className="font-serif text-4xl leading-tight font-bold sm:text-5xl">
+                                <h1 className="font-serif text-4xl font-bold leading-tight sm:text-5xl">
                                     {headingLead} <em className="not-italic underline decoration-red-600 decoration-4 underline-offset-4">{headingEmphasis}</em>
                                 </h1>
 
-                                <blockquote className="mt-6 max-w-2xl border-l-4 border-red-600 py-1 pl-5 font-serif text-xl leading-snug italic">
+                                <blockquote className="max-w-2xl py-1 pl-5 mt-6 font-serif text-xl italic leading-snug border-l-4 border-red-600">
                                     &quot;{quote.text}&quot;
-                                    <footer className="mt-2 text-sm font-sans font-medium text-muted-foreground not-italic">
+                                    <footer className="mt-2 font-sans text-sm not-italic font-medium text-muted-foreground">
                                         — {quote.attribution}
                                     </footer>
                                 </blockquote>
 
-                                <div className="mt-10 grid gap-8 border-t border-border pt-8 sm:grid-cols-2">
+                                <div className="grid gap-8 pt-8 mt-10 border-t border-border sm:grid-cols-2">
                                     {manifesto.map((item) => (
                                         <div key={item.heading}>
                                             <h2 className="text-xs font-semibold tracking-widest text-red-600 uppercase">
@@ -74,7 +87,7 @@ export default function AboutIndex(props: AboutPageProps) {
                             </div>
 
                             {/* Institutional dossier box */}
-                            <aside className="h-fit rounded-sm bg-neutral-950 p-5 text-white">
+                            <aside className="p-5 text-white rounded-sm h-fit bg-neutral-950">
                                 <span className="text-[10px] font-semibold tracking-widest text-red-500 uppercase">
                                     {dossier.label}
                                 </span>
@@ -83,7 +96,7 @@ export default function AboutIndex(props: AboutPageProps) {
                                 <dl className="mt-4 flex flex-col gap-1.5 border-t border-neutral-800 pt-4">
                                     {dossier.meta.map((item) => (
                                         <div key={item.label} className="flex items-center justify-between text-[11px]">
-                                            <dt className="tracking-wide text-neutral-500 uppercase">{item.label}</dt>
+                                            <dt className="tracking-wide uppercase text-neutral-500">{item.label}</dt>
                                             <dd className="font-semibold text-red-500 uppercase">{item.value}</dd>
                                         </div>
                                     ))}
@@ -91,6 +104,13 @@ export default function AboutIndex(props: AboutPageProps) {
                             </aside>
                         </div>
                     </section>
+
+                    <ContentOfferingsGrid
+                        eyebrow={contentOfferings.eyebrow}
+                        heading={contentOfferings.heading}
+                        description={contentOfferings.description}
+                        items={contentOfferings.items}
+                    />
 
                     <StatsBand
                         eyebrow={stats.eyebrow}
