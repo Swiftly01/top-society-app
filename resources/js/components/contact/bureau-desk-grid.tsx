@@ -10,6 +10,17 @@ interface BureauDeskGridProps {
     items: BureauDesk[];
 }
 
+/**
+ * mailto:/tel:/http(s) links must be plain <a> tags — Inertia's <Link>
+ * intercepts clicks and sends them through the SPA visit/XHR pipeline,
+ * which has no route for "mailto:editor@..." and surfaces as a 404
+ * instead of opening the reader's mail client. Only genuine internal
+ * paths (e.g. "/contact/secure-drop") go through Inertia's <Link>.
+ */
+function isExternalHref(href: string): boolean {
+    return /^(mailto:|tel:|https?:)/.test(href);
+}
+
 export function BureauDeskGrid({ eyebrow, heading, description, items }: BureauDeskGridProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -22,46 +33,53 @@ export function BureauDeskGrid({ eyebrow, heading, description, items }: BureauD
             </div>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {items.map((desk) => (
-                    <div
-                        key={desk.id}
-                        className={cn(
-                            'flex flex-col rounded-sm border p-6',
-                            desk.featured
-                                ? 'border-neutral-900 bg-neutral-950 text-white'
-                                : 'border-border',
-                        )}
-                    >
-                        <span
+                {items.map((desk) => {
+                    const ctaClassName = cn(
+                        'mt-4 inline-flex items-center gap-1 text-xs font-semibold tracking-wide uppercase',
+                        desk.featured ? 'text-red-500' : 'text-red-600',
+                    );
+
+                    return (
+                        <div
+                            key={desk.id}
                             className={cn(
-                                'text-[10px] font-semibold tracking-widest uppercase',
-                                desk.featured ? 'text-red-500' : 'text-red-600',
+                                'flex flex-col rounded-sm border p-6',
+                                desk.featured
+                                    ? 'border-neutral-900 bg-neutral-950 text-white'
+                                    : 'border-border',
                             )}
                         >
-                            {desk.id}
-                        </span>
-                        <h3 className="mt-2 font-serif text-lg font-bold">{desk.title}</h3>
-                        <p className={cn('mt-2 flex-1 text-sm', desk.featured ? 'text-neutral-400' : 'text-muted-foreground')}>
-                            {desk.description}
-                        </p>
-                        <div className={cn('mt-4 flex flex-col gap-0.5 border-t pt-3 text-xs', desk.featured ? 'border-neutral-800' : 'border-border')}>
-                            {desk.contactLines.map((line) => (
-                                <span key={line} className={desk.featured ? 'text-neutral-300' : 'text-muted-foreground'}>
-                                    {line}
-                                </span>
-                            ))}
+                            <span
+                                className={cn(
+                                    'text-[10px] font-semibold tracking-widest uppercase',
+                                    desk.featured ? 'text-red-500' : 'text-red-600',
+                                )}
+                            >
+                                {desk.id}
+                            </span>
+                            <h3 className="mt-2 font-serif text-lg font-bold">{desk.title}</h3>
+                            <p className={cn('mt-2 flex-1 text-sm', desk.featured ? 'text-neutral-400' : 'text-muted-foreground')}>
+                                {desk.description}
+                            </p>
+                            <div className={cn('mt-4 flex flex-col gap-0.5 border-t pt-3 text-xs', desk.featured ? 'border-neutral-800' : 'border-border')}>
+                                {desk.contactLines.map((line) => (
+                                    <span key={line} className={desk.featured ? 'text-neutral-300' : 'text-muted-foreground'}>
+                                        {line}
+                                    </span>
+                                ))}
+                            </div>
+                            {isExternalHref(desk.ctaHref) ? (
+                                <a href={desk.ctaHref} className={ctaClassName}>
+                                    {desk.ctaLabel} <ArrowRight className="size-3" />
+                                </a>
+                            ) : (
+                                <Link href={desk.ctaHref} className={ctaClassName}>
+                                    {desk.ctaLabel} <ArrowRight className="size-3" />
+                                </Link>
+                            )}
                         </div>
-                        <Link
-                            href={desk.ctaHref}
-                            className={cn(
-                                'mt-4 inline-flex items-center gap-1 text-xs font-semibold tracking-wide uppercase',
-                                desk.featured ? 'text-red-500' : 'text-red-600',
-                            )}
-                        >
-                            {desk.ctaLabel} <ArrowRight className="size-3" />
-                        </Link>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </section>
     );

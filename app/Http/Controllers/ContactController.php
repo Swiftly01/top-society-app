@@ -25,7 +25,7 @@ class ContactController extends Controller
                 'emailLabel' => 'Contact the Editor',
                 'emailValue' => 'editor@topsocietynig.com',
                 'footnotes' => [
-                    'Also reachable at 0818 005 1644 and 0806 896 7686',
+                    'Also reachable at 0818 005 1644',
                 ],
             ],
 
