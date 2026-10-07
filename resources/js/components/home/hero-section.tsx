@@ -20,7 +20,7 @@ export function HeroSection({ featuredArticles, secondaryHeadlines, latestMagazi
                 </div>
 
                 {/* Secondary headlines */}
-                <div className="flex flex-col divide-y divide-border">
+                <div className="flex flex-col divide-y divide-border lg:max-h-125 lg:overflow-y-auto lg:pr-1">
                     {latestMagazine && <MagazineCard magazine={latestMagazine} />}
                     {secondaryHeadlines.map((article) => (
                         <Link

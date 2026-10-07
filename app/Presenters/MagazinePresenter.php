@@ -21,7 +21,12 @@ class MagazinePresenter
             'issueLabel' => $magazine->issue_label,
             'description' => $magazine->description,
             'coverImage' => $magazine->coverImage?->url,
-            'downloadHref' => $magazine->hasPdf() ? route('magazines.download', $magazine->slug) : null,
+            'downloadHref' => $magazine->hasReadableResource() ? route('magazines.download', $magazine->slug) : null,
+            // True when the click will leave the site (no PDF hosted here
+            // yet, just a link) — tells the frontend to open a new tab and
+            // swap the "Download PDF" label for something that doesn't
+            // promise a download. See Magazine::hasReadableResource().
+            'isExternal' => ! $magazine->hasPdf() && $magazine->hasExternalLink(),
             'publishedAt' => $magazine->published_at?->toIso8601String(),
         ];
     }

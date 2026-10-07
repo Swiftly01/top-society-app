@@ -14,16 +14,21 @@ use Illuminate\Support\Carbon;
 /**
  * An issue of the print/digital magazine that the admin publishes on the
  * homepage: a cover image (reuses the `featured` media collection, like
- * Article/SponsoredFeature) plus the downloadable PDF itself (reuses the
+ * Article/SponsoredFeature) plus either an uploaded PDF (reuses the
  * `attachment` collection — see config/media.php, which already accepts
- * application/pdf there). Reusing those two collections instead of adding
- * bespoke ones keeps MediaService/HandlesMediaUploads working unchanged.
+ * application/pdf there) or, when there's no file to host yet, an
+ * `external_url` pointing readers at wherever the issue actually lives.
+ * The PDF takes priority when both are set — see hasReadableResource()
+ * and MagazineController::download(), which decides between the two.
+ * Reusing the existing media collections instead of adding bespoke ones
+ * keeps MediaService/HandlesMediaUploads working unchanged.
  *
  * @property int $id
  * @property string $title
  * @property string $slug
  * @property string|null $issue_label
  * @property string|null $description
+ * @property string|null $external_url
  * @property bool $is_active
  * @property Carbon|null $published_at
  * @property int $display_order
@@ -35,6 +40,7 @@ use Illuminate\Support\Carbon;
     'slug',
     'issue_label',
     'description',
+    'external_url',
     'is_active',
     'published_at',
     'display_order',
@@ -78,6 +84,21 @@ class Magazine extends Model
     public function hasPdf(): bool
     {
         return $this->pdf !== null;
+    }
+
+    public function hasExternalLink(): bool
+    {
+        return filled($this->external_url);
+    }
+
+    /**
+     * Whether there's anywhere at all to send a reader who clicks this
+     * issue — an uploaded PDF or an external link. The "Latest Issue"
+     * card only links out when this is true.
+     */
+    public function hasReadableResource(): bool
+    {
+        return $this->hasPdf() || $this->hasExternalLink();
     }
 
     // --- Query scopes -----------------------------------------------

@@ -77,8 +77,10 @@ export interface Magazine {
     description?: string | null;
     /** Absolute or storage-relative cover image URL. */
     coverImage?: string | null;
-    /** Null when no PDF has been uploaded yet — the card should hide its download affordance. */
+    /** Null when neither a PDF nor an external link is set — the card should hide its action affordance. */
     downloadHref?: string | null;
+    /** True when downloadHref leaves the site (admin set a link, not a hosted PDF) — open in a new tab, don't promise a download. */
+    isExternal?: boolean;
     publishedAt?: string | null;
 }
 

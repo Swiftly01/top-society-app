@@ -73,7 +73,7 @@ class MagazineResource extends Resource
                 ]),
 
             Section::make('Cover & File')
-                ->description('The cover image is what readers see; the PDF is what they download when they click it.')
+                ->description('The cover image is what readers see. For the PDF, either upload the file or, if it isn\'t ready to host here yet, paste a link to wherever it already lives — the uploaded PDF takes priority if you somehow set both.')
                 ->schema([
                     Placeholder::make('current_cover_image')
                         ->label('Current Cover Image')
@@ -101,15 +101,20 @@ class MagazineResource extends Resource
                         ->visible(fn (?Magazine $record) => $record !== null),
 
                     FileUpload::make('pdf_temp')
-                        ->label('Magazine PDF')
+                        ->label('Magazine PDF (optional)')
                         ->disk('local')
                         ->directory('tmp-uploads/magazines/pdf')
                         ->visibility('private')
                         ->acceptedFileTypes(['application/pdf'])
                         ->maxSize(config('media.max_sizes.attachment'))
-                        ->helperText('Uploading a new file replaces the current PDF. Leave empty to keep it.')
-                        ->required(fn (?Magazine $record) => $record === null)
+                        ->helperText('Uploading a new file replaces the current PDF. Leave empty to keep it — or to rely on the link below instead.')
                         ->dehydrated(),
+
+                    TextInput::make('external_url')
+                        ->label('External Link (if no PDF is hosted here)')
+                        ->url()
+                        ->maxLength(2048)
+                        ->helperText('Used only when there\'s no PDF above — readers who click the issue on the homepage are sent straight to this link instead of downloading a file.'),
                 ]),
 
             Section::make('Publishing')
@@ -150,6 +155,20 @@ class MagazineResource extends Resource
                     ->label('Issue')
                     ->searchable(),
 
+                TextColumn::make('resource_type')
+                    ->label('Source')
+                    ->state(fn (Magazine $record) => match (true) {
+                        $record->hasPdf() => 'PDF',
+                        $record->hasExternalLink() => 'Link',
+                        default => 'None',
+                    })
+                    ->badge()
+                    ->color(fn (string $state) => match ($state) {
+                        'PDF' => 'success',
+                        'Link' => 'info',
+                        default => 'danger',
+                    }),
+
                 TextColumn::make('downloads_count')
                     ->label('Downloads')
                     ->sortable(),
@@ -164,9 +183,10 @@ class MagazineResource extends Resource
             ->defaultSort('published_at', 'desc')
             ->recordActions([
                 Action::make('download')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn (Magazine $record) => $record->pdf ? route('magazines.download', $record->slug) : null)
-                    ->visible(fn (Magazine $record) => $record->hasPdf())
+                    ->label(fn (Magazine $record) => $record->hasPdf() ? 'Download' : 'Open Link')
+                    ->icon(fn (Magazine $record) => $record->hasPdf() ? 'heroicon-o-arrow-down-tray' : 'heroicon-o-arrow-top-right-on-square')
+                    ->url(fn (Magazine $record) => $record->hasReadableResource() ? route('magazines.download', $record->slug) : null)
+                    ->visible(fn (Magazine $record) => $record->hasReadableResource())
                     ->openUrlInNewTab(),
 
                 EditAction::make(),
