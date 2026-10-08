@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\AdvertRepositoryInterface;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\MagazineRepositoryInterface;
@@ -10,6 +11,7 @@ use App\Repositories\Contracts\SponsoredFeatureRepositoryInterface;
 use App\Repositories\Contracts\TagRepositoryInterface;
 use App\Repositories\Contracts\TeamMemberRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Eloquent\AdvertRepository;
 use App\Repositories\Eloquent\ArticleRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\MediaRepository;
@@ -38,7 +40,8 @@ class RepositoryServiceProvider extends ServiceProvider
         CategoryRepositoryInterface::class => CategoryRepository::class,
         TagRepositoryInterface::class => TagRepository::class,
         MediaRepositoryInterface::class => MediaRepository::class,
-         MagazineRepositoryInterface::class => MagazineRepository::class,
+        MagazineRepositoryInterface::class => MagazineRepository::class,
+        AdvertRepositoryInterface::class => AdvertRepository::class,
         UserRepositoryInterface::class => UserRepository::class,
         SponsoredFeatureRepositoryInterface::class => SponsoredFeatureRepository::class,
         TeamMemberRepositoryInterface::class => TeamMemberRepository::class,

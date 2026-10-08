@@ -1,16 +1,19 @@
 import { Link } from '@inertiajs/react';
+import { AdvertSlider } from '@/components/home/advert-slider';
 import { HeroCarousel } from '@/components/home/hero-carousel';
-import { MagazineCard } from '@/components/home/magazine-card';
-import type { Article, FeaturedArticle, Magazine } from '@/types/content';
+import { MagazineSlider } from '@/components/home/magazine-slider';
+import type { Advert, Article, FeaturedArticle, Magazine } from '@/types/content';
 
 interface HeroSectionProps {
     featuredArticles: FeaturedArticle[];
     secondaryHeadlines: Article[];
-    /** Null hides the card — nothing to show until an issue is published. */
-    latestMagazine?: Magazine | null;
+    /** Empty hides the advert slider. */
+    adverts?: Advert[];
+    /** Empty hides the magazine slider. */
+    magazines?: Magazine[];
 }
 
-export function HeroSection({ featuredArticles, secondaryHeadlines, latestMagazine }: HeroSectionProps) {
+export function HeroSection({ featuredArticles, secondaryHeadlines, adverts = [], magazines = [] }: HeroSectionProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-3">
@@ -19,29 +22,35 @@ export function HeroSection({ featuredArticles, secondaryHeadlines, latestMagazi
                     <HeroCarousel articles={featuredArticles} />
                 </div>
 
-                {/* Secondary headlines */}
-                <div className="flex flex-col divide-y divide-border lg:max-h-125 lg:overflow-y-auto lg:pr-1">
-                    {latestMagazine && <MagazineCard magazine={latestMagazine} />}
-                    {secondaryHeadlines.map((article) => (
-                        <Link
-                            key={article.id}
-                            href={article.href}
-                            className="group flex flex-col gap-2 py-5 first:pt-0"
-                        >
-                            <span className="text-xs font-semibold tracking-wide text-red-600 uppercase">
-                                {article.category}
-                            </span>
-                            <h2 className="font-serif text-lg leading-snug font-bold text-foreground group-hover:underline">
-                                {article.title}
-                            </h2>
-                            {article.excerpt && (
-                                <p className="line-clamp-2 text-sm text-muted-foreground">{article.excerpt}</p>
-                            )}
-                            {article.readTime && (
-                                <span className="text-xs text-muted-foreground">{article.readTime}</span>
-                            )}
-                        </Link>
-                    ))}
+                {/* Right rail: adverts on top, magazine issues below, then headlines */}
+                <div className="flex flex-col gap-5 lg:max-h-125 lg:overflow-y-auto lg:pr-1">
+                    <AdvertSlider adverts={adverts} />
+                    <MagazineSlider magazines={magazines} />
+
+                    {secondaryHeadlines.length > 0 && (
+                        <div className="flex flex-col divide-y divide-border">
+                            {secondaryHeadlines.map((article) => (
+                                <Link
+                                    key={article.id}
+                                    href={article.href}
+                                    className="group flex flex-col gap-2 py-5 first:pt-0"
+                                >
+                                    <span className="text-xs font-semibold tracking-wide text-red-600 uppercase">
+                                        {article.category}
+                                    </span>
+                                    <h2 className="font-serif text-lg leading-snug font-bold text-foreground group-hover:underline">
+                                        {article.title}
+                                    </h2>
+                                    {article.excerpt && (
+                                        <p className="line-clamp-2 text-sm text-muted-foreground">{article.excerpt}</p>
+                                    )}
+                                    {article.readTime && (
+                                        <span className="text-xs text-muted-foreground">{article.readTime}</span>
+                                    )}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

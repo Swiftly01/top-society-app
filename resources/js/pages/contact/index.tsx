@@ -75,14 +75,14 @@ export default function ContactIndex(props: ContactPageProps) {
                         submitLabel={dispatch.submitLabel}
                     />
 
-                    <div className="border-t border-border bg-muted/30">
+                    {/* <div className="border-t border-border bg-muted/30">
                         <OfficeNetworkGrid
                             eyebrow={offices.eyebrow}
                             heading={offices.heading}
                             sublabel={offices.sublabel}
                             items={offices.items}
                         />
-                    </div>
+                    </div> */}
                 </main>
 
                 <SiteFooter />

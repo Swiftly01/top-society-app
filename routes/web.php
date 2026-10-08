@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
@@ -42,6 +43,10 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/legal/{slug}', [LegalController::class, 'show'])->name('legal.show');
 Route::get('/features/{slug}', [SponsoredFeatureController::class, 'show'])->name('sponsored-features.show');
 Route::get('/magazines/{slug}/download', [MagazineController::class, 'download'])->name('magazines.download');
+Route::get('/adverts/{advert}/click', [AdvertController::class, 'click'])
+    ->whereNumber('advert')
+    ->middleware('throttle:60,1')
+    ->name('adverts.click');
 
 Route::get('/api/search/suggest', [SearchSuggestController::class, 'index'])
     ->middleware('throttle:30,1')

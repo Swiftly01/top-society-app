@@ -29,7 +29,8 @@ enum PermissionName: string
     case ManageSponsoredContent = 'manage_sponsored_content';
     case ManageTeamMembers = 'manage_team_members';
 
-      case ManageMagazines = 'manage_magazines';
+    case ManageMagazines = 'manage_magazines';
+    case ManageAdverts = 'manage_adverts';
 
     // Users & roles
     case ManageUsers = 'manage_users';

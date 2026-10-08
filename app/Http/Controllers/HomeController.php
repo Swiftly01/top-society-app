@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ContentType;
+use App\Presenters\AdvertPresenter;
 use App\Presenters\ArticlePresenter;
 use App\Presenters\MagazinePresenter;
 use App\Presenters\SponsoredFeaturePresenter;
+use App\Repositories\Contracts\AdvertRepositoryInterface;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\MagazineRepositoryInterface;
@@ -23,11 +25,21 @@ class HomeController extends Controller
      */
     protected const ARTICLES_PER_CATEGORY_SECTION = 3;
 
+    /**
+     * Slide caps for the two hero sliders. Both are server-side limits so
+     * the homepage payload stays bounded however many adverts or issues
+     * the admin accumulates over the years.
+     */
+    protected const ADVERTS_IN_SLIDER = 6;
+
+    protected const MAGAZINES_IN_SLIDER = 8;
+
     public function __construct(
         protected ArticleRepositoryInterface $articles,
         protected CategoryRepositoryInterface $categories,
         protected SponsoredFeatureRepositoryInterface $sponsoredFeatures,
         protected MagazineRepositoryInterface $magazines,
+        protected AdvertRepositoryInterface $adverts,
     ) {}
 
     public function index(Request $request): Response
@@ -39,7 +51,8 @@ class HomeController extends Controller
 
             'featuredArticles' => $this->featuredArticles(),
             'secondaryHeadlines' => $this->secondaryHeadlines(),
-            'latestMagazine' => $this->latestMagazine(),
+            'adverts' => $this->advertSlides(),
+            'magazines' => $this->magazineSlides(),
 
             
             'partnership' => $this->partnershipSection(),
@@ -63,18 +76,34 @@ class HomeController extends Controller
     }
 
     /**
-     * The homepage magazine card — the current live issue's cover, plus a
-     * link that downloads its PDF. Null hides the card entirely, so
-     * nothing needs deploying to turn this section on: publishing the
-     * first issue in the admin is enough.
+     * The advert slider above the magazine slider. Empty hides the
+     * slider, so nothing needs deploying to turn it on: adding the first
+     * advert in the admin is enough. Each slide links to our click
+     * tracker (see AdvertPresenter), not straight to the advertiser.
      *
-     * @return array<string, mixed>|null
+     * @return array<int, array<string, mixed>>
      */
-    protected function latestMagazine(): ?array
+    protected function advertSlides(): array
     {
-        $magazine = $this->magazines->latestPublished();
+        return $this->adverts->live(self::ADVERTS_IN_SLIDER)
+            ->map(fn ($advert) => AdvertPresenter::toSlide($advert))
+            ->values()
+            ->all();
+    }
 
-        return $magazine ? MagazinePresenter::toCard($magazine) : null;
+    /**
+     * The magazine slider: the most recent live issues, newest first, each
+     * with a link that downloads its PDF (or opens its external link).
+     * Empty hides the slider.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function magazineSlides(): array
+    {
+        return $this->magazines->allPublished(self::MAGAZINES_IN_SLIDER)
+            ->map(fn ($magazine) => MagazinePresenter::toCard($magazine))
+            ->values()
+            ->all();
     }
 
     /**

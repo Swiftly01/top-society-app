@@ -13,7 +13,8 @@ export default function Home(props: HomePageProps) {
         activeNav,
         featuredArticles,
         secondaryHeadlines,
-        latestMagazine,
+        adverts,
+        magazines,
         partnership,
         categoryFilters,
         activeCategory,
@@ -35,7 +36,8 @@ export default function Home(props: HomePageProps) {
                     <HeroSection
                         featuredArticles={featuredArticles}
                         secondaryHeadlines={secondaryHeadlines}
-                        latestMagazine={latestMagazine}
+                        adverts={adverts}
+                        magazines={magazines}
                     />
 
                     {/* <PartnershipDossier partnership={partnership} /> */}

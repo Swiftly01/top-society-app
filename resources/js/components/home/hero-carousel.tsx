@@ -45,7 +45,19 @@ export function HeroCarousel({ articles, intervalMs = 6000 }: HeroCarouselProps)
 
     return (
         <div
-            className="group/carousel relative min-h-125 overflow-hidden rounded-sm"
+            // Was a flat min-h-125 (500px) at every screen size, including
+            // phones — on a narrow viewport that's most of the screen taken
+            // up by the hero before any real content shows. Scaling the
+            // minimum height up by breakpoint keeps it proportionate on
+            // mobile while still landing on the original 500px at lg+ (the
+            // height MagazineCard's lg:max-h-125 is matched against).
+            // Slides below are `absolute inset-0`, so their content never
+            // contributes to this container's own height — the text inside
+            // has to stay within min-h-85 (340px) on its own (see the
+            // line-clamp and hidden-on-mobile excerpt below), or it'd get
+            // silently clipped by overflow-hidden instead of visibly
+            // breaking anything.
+            className="group/carousel relative min-h-85 overflow-hidden rounded-sm sm:min-h-100 lg:min-h-125"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onFocus={() => setPaused(true)}
@@ -68,14 +80,22 @@ export function HeroCarousel({ articles, intervalMs = 6000 }: HeroCarouselProps)
                     <ArticleMedia src={article.image} alt={article.title} className="absolute inset-0 size-full" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-                    <div className="relative flex flex-col gap-3 p-6 sm:p-8">
+                    <div className="relative flex flex-col gap-2 p-4 sm:gap-3 sm:p-6 lg:p-8">
                         <span className="w-fit rounded-sm bg-red-600 px-2 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
                             {article.badge}
                         </span>
-                        <h2 className="font-serif text-2xl leading-tight font-bold text-white sm:text-4xl">
+                        <h2 className="line-clamp-2 font-serif text-xl leading-tight font-bold text-white sm:text-2xl lg:text-4xl">
                             {article.title}
                         </h2>
-                        {article.excerpt && <p className="max-w-xl text-sm text-neutral-200">{article.excerpt}</p>}
+                        {/* Excerpts have no fixed length, so they're the
+                            highest-risk element for overflowing a short
+                            mobile slide — hidden below sm, where there's
+                            the least room to spare. */}
+                        {article.excerpt && (
+                            <p className="line-clamp-2 hidden max-w-xl text-sm text-neutral-200 sm:block">
+                                {article.excerpt}
+                            </p>
+                        )}
                         <p className="text-xs text-neutral-300">
                             {article.author && <>By {article.author} · </>}
                             {article.readTime}

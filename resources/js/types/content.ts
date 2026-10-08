@@ -69,7 +69,18 @@ export interface CategoryFilter {
     value: string;
 }
 
-/** The current live magazine issue — homepage cover card, click-to-download. */
+/** One slide of the homepage advert slider. */
+export interface Advert {
+    id: number | string;
+    /** Internal name; doubles as the image's alt text. */
+    title: string;
+    /** Absolute or storage-relative banner image URL. */
+    image?: string | null;
+    /** Our click-tracking URL — it counts the click, then redirects to the advertiser's site. Open in a new tab. */
+    href: string;
+}
+
+/** A live magazine issue — one slide of the homepage magazine slider, click-to-download. */
 export interface Magazine {
     id: number | string;
     title: string;
@@ -141,8 +152,10 @@ export interface HomePageProps {
     /** Rotates through the homepage hero carousel — 2 to 5 slides is the sweet spot. */
     featuredArticles: FeaturedArticle[];
     secondaryHeadlines: Article[];
-    /** Null when no issue has been published yet — the magazine card is hidden. */
-    latestMagazine: Magazine | null;
+    /** Live adverts in the admin's chosen order — empty hides the advert slider. */
+    adverts: Advert[];
+    /** Live issues, newest first — empty hides the magazine slider. */
+    magazines: Magazine[];
     /** Null when no placement is currently featured and active — the whole Partnership Dossier section is hidden. */
     partnership: PartnershipSection | null;
     categoryFilters: CategoryFilter[];
