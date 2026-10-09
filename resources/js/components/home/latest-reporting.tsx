@@ -21,14 +21,15 @@ export function LatestReporting({
 }: LatestReportingProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-3">
-                <div className="lg:col-span-2">
-                    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+                <div className="min-w-0 lg:col-span-2">
+                    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="font-serif text-2xl font-bold text-foreground">Latest Reporting</h2>
 
                         {/* Category filters. Uses partial reloads so switching category only
-                            re-fetches `latestArticles` + `activeCategory`, not the whole page. */}
-                        <div className="flex gap-1 overflow-x-auto rounded-full bg-muted p-1">
+                            re-fetches `latestArticles` + `activeCategory`, not the whole page.
+                            On narrow screens the row scrolls sideways instead of overflowing the page. */}
+                        <div className="flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-full bg-muted p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                             {categoryFilters.map((filter) => (
                                 <button
                                     key={filter.value}
