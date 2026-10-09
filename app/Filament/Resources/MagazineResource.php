@@ -73,24 +73,23 @@ class MagazineResource extends Resource
                 ]),
 
             Section::make('Cover & File')
-                ->description('The cover image is what readers see. For the PDF, either upload the file or, if it isn\'t ready to host here yet, paste a link to wherever it already lives — the uploaded PDF takes priority if you somehow set both.')
+                ->description('Readers flip through the uploaded PDF on the homepage, starting from its first page — so the cover image is optional. For the PDF, either upload the file or, if it isn\'t ready to host here yet, paste a link to wherever it already lives — the uploaded PDF takes priority if you somehow set both.')
                 ->schema([
                     Placeholder::make('current_cover_image')
                         ->label('Current Cover Image')
                         ->content(fn (?Magazine $record) => $record?->coverImage
                             ? new HtmlString('<img src="'.e($record->coverImage->url).'" style="max-height:160px;border-radius:6px" />')
-                            : 'No cover image set yet.')
+                            : 'No cover image set — the PDF\'s first page is used.')
                         ->visible(fn (?Magazine $record) => $record !== null),
 
                     FileUpload::make('cover_image_temp')
-                        ->label('Cover Image')
+                        ->label('Cover Image (optional)')
                         ->image()
                         ->disk('local')
                         ->directory('tmp-uploads/magazines/cover')
                         ->visibility('private')
                         ->maxSize(config('media.max_sizes.image'))
-                        ->helperText('Uploading a new file replaces the current cover. Leave empty to keep it.')
-                        ->required(fn (?Magazine $record) => $record === null)
+                        ->helperText('Optional. If set, it is shown as the issue\'s first page and while the PDF loads; if left empty, the PDF\'s own first page is used. Uploading a new file replaces the current cover.')
                         ->dehydrated(),
 
                     Placeholder::make('current_pdf')

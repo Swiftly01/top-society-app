@@ -24,8 +24,8 @@ class AdvertController extends Controller
         $model = $this->adverts->find($advert);
 
         // Only live adverts with a plain http(s) destination are followed —
-        // an expired, switched-off or malformed one is a 404, not a redirect.
-        if (! $model || ! $model->isLive() || ! preg_match('#^https?://#i', $model->target_url)) {
+        // an expired, switched-off, link-less or malformed one is a 404.
+        if (! $model || ! $model->isLive() || ! $model->target_url || ! preg_match('#^https?://#i', $model->target_url)) {
             throw new NotFoundHttpException();
         }
 

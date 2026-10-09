@@ -76,8 +76,8 @@ export interface Advert {
     title: string;
     /** Absolute or storage-relative banner image URL. */
     image?: string | null;
-    /** Our click-tracking URL — it counts the click, then redirects to the advertiser's site. Open in a new tab. */
-    href: string;
+    /** Our click-tracking URL — it counts the click, then redirects to the advertiser's site. Open in a new tab. Null when the advert has no link: render it as a plain, non-clickable banner. */
+    href?: string | null;
 }
 
 /** A live magazine issue — one slide of the homepage magazine slider, click-to-download. */
@@ -88,6 +88,8 @@ export interface Magazine {
     description?: string | null;
     /** Absolute or storage-relative cover image URL. */
     coverImage?: string | null;
+    /** Public URL of the issue's PDF, read in the page by the magazine slider. Null for external-link-only issues. */
+    pdfUrl?: string | null;
     /** Null when neither a PDF nor an external link is set — the card should hide its action affordance. */
     downloadHref?: string | null;
     /** True when downloadHref leaves the site (admin set a link, not a hosted PDF) — open in a new tab, don't promise a download. */

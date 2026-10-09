@@ -21,6 +21,10 @@ class MagazinePresenter
             'issueLabel' => $magazine->issue_label,
             'description' => $magazine->description,
             'coverImage' => $magazine->coverImage?->url,
+            // Public storage URL of the PDF, for the in-page reader. Null when
+            // the issue only has an external link — the slider then shows the
+            // cover and links out instead.
+            'pdfUrl' => $magazine->hasPdf() ? $magazine->pdf?->url : null,
             'downloadHref' => $magazine->hasReadableResource() ? route('magazines.download', $magazine->slug) : null,
             // True when the click will leave the site (no PDF hosted here
             // yet, just a link) — tells the frontend to open a new tab and

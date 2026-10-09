@@ -51,13 +51,12 @@ class AdvertResource extends Resource
                         ->helperText('Internal name — also used as the image\'s accessible description.'),
 
                     TextInput::make('target_url')
-                        ->label('Website Link')
-                        ->required()
+                        ->label('Website Link (optional)')
                         ->url()
                         ->regex('/^https?:\/\//i')
                         ->maxLength(2048)
                         ->placeholder('https://advertiser.com/landing-page')
-                        ->helperText('Where readers go when they click the advert. Must start with http:// or https://.'),
+                        ->helperText('Where readers go when they click the advert. Leave empty for a banner that isn\'t clickable. Must start with http:// or https://.'),
                 ]),
 
             Section::make('Image')
@@ -124,6 +123,7 @@ class AdvertResource extends Resource
 
                 TextColumn::make('target_url')
                     ->label('Link')
+                    ->placeholder('No link')
                     ->limit(40)
                     ->url(fn (Advert $record) => $record->target_url)
                     ->openUrlInNewTab(),

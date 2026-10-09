@@ -34,27 +34,7 @@ export function AdvertSlider({ adverts, intervalMs = 5000 }: AdvertSliderProps) 
                     style={{ transform: `translateX(-${index * 100}%)` }}
                 >
                     {adverts.map((advert, i) => (
-                        <a
-                            key={advert.id}
-                            href={advert.href}
-                            target="_blank"
-                            rel="sponsored noopener noreferrer"
-                            aria-hidden={i !== index}
-                            tabIndex={i === index ? 0 : -1}
-                            aria-label={`${advert.title} (advertisement, opens in a new tab)`}
-                            className="block size-full shrink-0"
-                        >
-                            {advert.image && (
-                                <img
-                                    src={advert.image}
-                                    alt={advert.title}
-                                    // Only the first slide is visible on load; the rest can wait.
-                                    loading={i === 0 ? 'eager' : 'lazy'}
-                                    draggable={false}
-                                    className="size-full object-cover"
-                                />
-                            )}
-                        </a>
+                        <AdvertSlide key={advert.id} advert={advert} isActive={i === index} isFirst={i === 0} />
                     ))}
                 </div>
 
@@ -100,5 +80,51 @@ export function AdvertSlider({ adverts, intervalMs = 5000 }: AdvertSliderProps) 
                 )}
             </div>
         </section>
+    );
+}
+
+interface AdvertSlideProps {
+    advert: Advert;
+    isActive: boolean;
+    isFirst: boolean;
+}
+
+/**
+ * One banner. With a link it is an anchor to the click tracker, opening
+ * in a new tab; without one it is a plain image, so nothing suggests it
+ * can be clicked.
+ */
+function AdvertSlide({ advert, isActive, isFirst }: AdvertSlideProps) {
+    const image = advert.image ? (
+        <img
+            src={advert.image}
+            alt={advert.title}
+            // Only the first slide is visible on load; the rest can wait.
+            loading={isFirst ? 'eager' : 'lazy'}
+            draggable={false}
+            className="size-full object-cover"
+        />
+    ) : null;
+
+    if (!advert.href) {
+        return (
+            <div className="block size-full shrink-0" aria-hidden={!isActive}>
+                {image}
+            </div>
+        );
+    }
+
+    return (
+        <a
+            href={advert.href}
+            target="_blank"
+            rel="sponsored noopener noreferrer"
+            aria-hidden={!isActive}
+            tabIndex={isActive ? 0 : -1}
+            aria-label={`${advert.title} (advertisement, opens in a new tab)`}
+            className="block size-full shrink-0"
+        >
+            {image}
+        </a>
     );
 }

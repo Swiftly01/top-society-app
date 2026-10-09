@@ -19,9 +19,10 @@ class AdvertPresenter
             'id' => $advert->id,
             'title' => $advert->title,
             'image' => $advert->coverImage?->url,
-            // Always our own tracking URL, never the advertiser's — the
-            // click is counted, then AdvertController redirects onward.
-            'href' => route('adverts.click', $advert->id),
+            // Our own tracking URL, never the advertiser's — the click is
+            // counted, then AdvertController redirects onward. Null when the
+            // advert has no link, so the slider renders it unclickable.
+            'href' => $advert->target_url ? route('adverts.click', $advert->id) : null,
         ];
     }
 }
