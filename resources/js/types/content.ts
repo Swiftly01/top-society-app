@@ -69,13 +69,15 @@ export interface CategoryFilter {
     value: string;
 }
 
-/** One slide of the homepage advert slider. */
+/** One slide of an advert slider (every advert slot uses this shape). */
 export interface Advert {
     id: number | string;
-    /** Internal name; doubles as the image's alt text. */
+    /** Internal name; doubles as the image's alt text / the video's accessible label. */
     title: string;
-    /** Absolute or storage-relative banner image URL. */
-    image?: string | null;
+    /** Which element to render. */
+    type: 'image' | 'video';
+    /** URL of the image or video file. */
+    src?: string | null;
     /** Our click-tracking URL — it counts the click, then redirects to the advertiser's site. Open in a new tab. Null when the advert has no link: render it as a plain, non-clickable banner. */
     href?: string | null;
 }
@@ -154,8 +156,10 @@ export interface HomePageProps {
     /** Rotates through the homepage hero carousel — 2 to 5 slides is the sweet spot. */
     featuredArticles: FeaturedArticle[];
     secondaryHeadlines: Article[];
-    /** Live adverts in the admin's chosen order — empty hides the advert slider. */
+    /** Live adverts for the hero sidebar slot, in the admin's chosen order — empty hides that slider. */
     adverts: Advert[];
+    /** Live adverts for the banner between Latest Reporting and the category cards — empty hides the banner. */
+    bannerAdverts: Advert[];
     /** Live issues, newest first — empty hides the magazine slider. */
     magazines: Magazine[];
     /** Null when no placement is currently featured and active — the whole Partnership Dossier section is hidden. */

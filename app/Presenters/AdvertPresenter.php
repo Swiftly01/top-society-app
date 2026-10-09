@@ -16,13 +16,11 @@ class AdvertPresenter
     public static function toSlide(Advert $advert): array
     {
         return [
-            'id' => $advert->id,
-            'title' => $advert->title,
-            'image' => $advert->coverImage?->url,
-            // Our own tracking URL, never the advertiser's — the click is
-            // counted, then AdvertController redirects onward. Null when the
-            // advert has no link, so the slider renders it unclickable.
-            'href' => $advert->target_url ? route('adverts.click', $advert->id) : null,
-        ];
+    'id' => $advert->id,
+    'title' => $advert->title,
+    'type' => $advert->isVideo() ? 'video' : 'image',
+    'src' => $advert->coverImage?->url,
+    'href' => $advert->target_url ? route('adverts.click', $advert->id) : null,
+];
     }
 }

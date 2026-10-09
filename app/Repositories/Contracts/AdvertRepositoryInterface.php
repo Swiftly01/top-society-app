@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
+use App\Enums\AdvertPlacement;
 use App\Models\Advert;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -11,13 +12,14 @@ use Illuminate\Database\Eloquent\Collection;
 interface AdvertRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Adverts currently on the site (active, inside their run window, and
-     * with an image uploaded), in the admin's chosen order. Capped so the
-     * homepage payload stays small however many adverts exist.
+     * Adverts currently showing in one slot (active, inside their run
+     * window, and with a file uploaded), in the admin's chosen order.
+     * Capped — by default at the slot's own limit — so the homepage
+     * payload stays small however many adverts exist.
      *
      * @return Collection<int, Advert>
      */
-    public function live(int $limit = 6): Collection;
+    public function live(AdvertPlacement $placement, ?int $limit = null): Collection;
 
     public function incrementClicks(Advert $advert): void;
 }

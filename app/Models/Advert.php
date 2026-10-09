@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AdvertPlacement;
 use App\Enums\MediaCollection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,11 +16,13 @@ use Illuminate\Support\Carbon;
  * A banner advert shown in the homepage advert slider. The creative is a
  * single image (the `featured` media collection, same as Article /
  * Magazine / TeamMember, so MediaService and HandlesMediaUploads work
- * unchanged) and clicking it sends the reader to `target_url`.
+ * unchanged) and clicking it sends the reader to `target_url` when one is set (the link
+ * is optional — without it the advert is a plain, non-clickable banner).
  *
  * @property int $id
  * @property string $title
- * @property string $target_url
+ * @property AdvertPlacement $placement
+ * @property string|null $target_url
  * @property bool $is_active
  * @property Carbon|null $starts_at
  * @property Carbon|null $ends_at
@@ -29,6 +32,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable([
     'title',
+    'placement',
     'target_url',
     'is_active',
     'starts_at',
@@ -42,6 +46,7 @@ class Advert extends Model
     protected function casts(): array
     {
         return [
+            'placement' => AdvertPlacement::class,
             'is_active' => 'boolean',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
@@ -60,6 +65,12 @@ class Advert extends Model
         return $this->morphMany(Media::class, 'mediable')->orderBy('order');
     }
 
+    /**
+     * The advert's creative: one image OR one video, both stored in the
+     * single-slot `featured` collection so uploading a new file always
+     * replaces the old one. (Named coverImage to match Article/Magazine;
+     * Media::isVideo() tells the two apart.)
+     */
     public function coverImage(): MorphOne
     {
         return $this->morphOne(Media::class, 'mediable')
@@ -85,9 +96,19 @@ class Advert extends Model
             ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>', now()));
     }
 
+    public function scopeForPlacement(Builder $query, AdvertPlacement $placement): Builder
+    {
+        return $query->where('placement', $placement->value);
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('display_order')->orderByDesc('id');
+    }
+
+    public function isVideo(): bool
+    {
+        return (bool) $this->coverImage?->isVideo();
     }
 
     public function isLive(): bool

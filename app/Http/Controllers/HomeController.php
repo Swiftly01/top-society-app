@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AdvertPlacement;
 use App\Enums\ContentType;
 use App\Presenters\AdvertPresenter;
 use App\Presenters\ArticlePresenter;
@@ -26,12 +27,10 @@ class HomeController extends Controller
     protected const ARTICLES_PER_CATEGORY_SECTION = 3;
 
     /**
-     * Slide caps for the two hero sliders. Both are server-side limits so
-     * the homepage payload stays bounded however many adverts or issues
-     * the admin accumulates over the years.
+     * Cap for the magazine slider. (Each advert slot's cap lives on
+     * AdvertPlacement::limit().) Server-side, so the homepage payload stays
+     * bounded however many issues the admin accumulates over the years.
      */
-    protected const ADVERTS_IN_SLIDER = 6;
-
     protected const MAGAZINES_IN_SLIDER = 8;
 
     public function __construct(
@@ -51,8 +50,9 @@ class HomeController extends Controller
 
             'featuredArticles' => $this->featuredArticles(),
             'secondaryHeadlines' => $this->secondaryHeadlines(),
-            'adverts' => $this->advertSlides(),
+            'adverts' => $this->advertSlides(AdvertPlacement::HeroRail),
             'magazines' => $this->magazineSlides(),
+            'bannerAdverts' => $this->advertSlides(AdvertPlacement::HomeBanner),
 
             
             'partnership' => $this->partnershipSection(),
@@ -76,16 +76,16 @@ class HomeController extends Controller
     }
 
     /**
-     * The advert slider above the magazine slider. Empty hides the
-     * slider, so nothing needs deploying to turn it on: adding the first
-     * advert in the admin is enough. Each slide links to our click
-     * tracker (see AdvertPresenter), not straight to the advertiser.
+     * The adverts for one slot. Empty hides that slot's slider, so nothing
+     * needs deploying to turn it on: adding the first advert in the admin
+     * is enough. Each slide links to our click tracker (see
+     * AdvertPresenter), not straight to the advertiser.
      *
      * @return array<int, array<string, mixed>>
      */
-    protected function advertSlides(): array
+    protected function advertSlides(AdvertPlacement $placement): array
     {
-        return $this->adverts->live(self::ADVERTS_IN_SLIDER)
+        return $this->adverts->live($placement)
             ->map(fn ($advert) => AdvertPresenter::toSlide($advert))
             ->values()
             ->all();

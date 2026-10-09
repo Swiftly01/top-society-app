@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+import { AdvertBanner } from "@/components/home/advert-banner";
 import { CategoryNewsSections } from "@/components/home/category-news-sections";
 import { DailyBriefing } from "@/components/home/daily-briefing";
 import { HeroSection } from "@/components/home/hero-section";
@@ -14,6 +15,7 @@ export default function Home(props: HomePageProps) {
         featuredArticles,
         secondaryHeadlines,
         adverts,
+        bannerAdverts,
         magazines,
         partnership,
         categoryFilters,
@@ -52,6 +54,8 @@ export default function Home(props: HomePageProps) {
                         mostRead={mostRead}
                         mostReadPromo={mostReadPromo}
                     />
+
+                    <AdvertBanner adverts={bannerAdverts} />
 
                     <CategoryNewsSections sections={categorySections} />
 

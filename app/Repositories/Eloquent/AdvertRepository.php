@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enums\AdvertPlacement;
 use App\Models\Advert;
 use App\Repositories\Contracts\AdvertRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,13 +23,14 @@ class AdvertRepository extends BaseRepository implements AdvertRepositoryInterfa
         return parent::query()->with('coverImage');
     }
 
-    public function live(int $limit = 6): Collection
+    public function live(AdvertPlacement $placement, ?int $limit = null): Collection
     {
         return $this->query()
+            ->forPlacement($placement)
             ->live()
             ->whereHas('coverImage')
             ->ordered()
-            ->limit($limit)
+            ->limit($limit ?? $placement->limit())
             ->get();
     }
 

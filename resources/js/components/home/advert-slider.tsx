@@ -1,21 +1,34 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useAutoSlide } from '@/hooks/use-auto-slide';
 import { cn } from '@/lib/utils';
 import type { Advert } from '@/types/content';
 
 interface AdvertSliderProps {
     adverts: Advert[];
+    /** Screen-reader name for this slot, e.g. "Sponsored banners". */
+    ariaLabel?: string;
+    /** Tailwind aspect-ratio classes for the slot's shape. */
+    aspectClassName?: string;
     /** Milliseconds between auto-advances. Set to 0 to disable autoplay. */
     intervalMs?: number;
 }
 
 /**
- * Sliding banner for the adverts the admin manages. Each slide is one
- * image that links to the advertiser's website in a new tab — via
- * AdvertController::click, which counts the click first. Renders nothing
- * when there are no live adverts.
+ * Sliding banner for the adverts the admin manages. Every slot on the site
+ * uses this one component — a slot only differs in its shape
+ * (`aspectClassName`) and the list of adverts it is given. A slide is an
+ * image or a muted looping video; with a link it opens the advertiser's
+ * site in a new tab via AdvertController::click (which counts the click
+ * first), without one it is a plain banner. Renders nothing when there
+ * are no live adverts.
  */
-export function AdvertSlider({ adverts, intervalMs = 5000 }: AdvertSliderProps) {
+export function AdvertSlider({
+    adverts,
+    ariaLabel = 'Advertisements',
+    aspectClassName = 'aspect-video',
+    intervalMs = 5000,
+}: AdvertSliderProps) {
     const { index, goTo, next, prev, containerProps } = useAutoSlide({ count: adverts.length, intervalMs });
 
     if (adverts.length === 0) return null;
@@ -25,10 +38,10 @@ export function AdvertSlider({ adverts, intervalMs = 5000 }: AdvertSliderProps) 
             className="group/adverts relative"
             role="region"
             aria-roledescription="carousel"
-            aria-label="Advertisements"
+            aria-label={ariaLabel}
             {...containerProps}
         >
-            <div className="relative aspect-video overflow-hidden rounded-sm bg-muted">
+            <div className={cn('relative overflow-hidden rounded-sm bg-muted', aspectClassName)}>
                 <div
                     className="flex size-full transition-transform duration-500 ease-in-out motion-reduce:transition-none"
                     style={{ transform: `translateX(-${index * 100}%)` }}
@@ -91,25 +104,29 @@ interface AdvertSlideProps {
 
 /**
  * One banner. With a link it is an anchor to the click tracker, opening
- * in a new tab; without one it is a plain image, so nothing suggests it
- * can be clicked.
+ * in a new tab; without one it is a plain element, so nothing suggests
+ * it can be clicked.
  */
 function AdvertSlide({ advert, isActive, isFirst }: AdvertSlideProps) {
-    const image = advert.image ? (
-        <img
-            src={advert.image}
-            alt={advert.title}
-            // Only the first slide is visible on load; the rest can wait.
-            loading={isFirst ? 'eager' : 'lazy'}
-            draggable={false}
-            className="size-full object-cover"
-        />
+    const media = advert.src ? (
+        advert.type === 'video' ? (
+            <AdvertVideo src={advert.src} title={advert.title} isActive={isActive} />
+        ) : (
+            <img
+                src={advert.src}
+                alt={advert.title}
+                // Only the first slide is visible on load; the rest can wait.
+                loading={isFirst ? 'eager' : 'lazy'}
+                draggable={false}
+                className="size-full object-cover"
+            />
+        )
     ) : null;
 
     if (!advert.href) {
         return (
             <div className="block size-full shrink-0" aria-hidden={!isActive}>
-                {image}
+                {media}
             </div>
         );
     }
@@ -124,7 +141,72 @@ function AdvertSlide({ advert, isActive, isFirst }: AdvertSlideProps) {
             aria-label={`${advert.title} (advertisement, opens in a new tab)`}
             className="block size-full shrink-0"
         >
-            {image}
+            {media}
         </a>
+    );
+}
+
+interface AdvertVideoProps {
+    src: string;
+    title: string;
+    isActive: boolean;
+}
+
+/**
+ * A muted, looping, inline video. Built so that a slot full of videos
+ * stays cheap:
+ *  - a video's file isn't requested until its slide has been shown once;
+ *  - it only plays while its slide is the active one AND on screen, so
+ *    nothing decodes in the background or off-screen;
+ *  - visitors who prefer reduced motion get a still first frame.
+ */
+function AdvertVideo({ src, title, isActive }: AdvertVideoProps) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [onScreen, setOnScreen] = useState(false);
+    // Derived-state pattern: flips to true during the render in which the slide first becomes active.
+    const [armed, setArmed] = useState(isActive);
+
+    if (isActive && !armed) setArmed(true);
+
+    useEffect(() => {
+        const video = videoRef.current;
+
+        if (!video) return;
+
+        const observer = new IntersectionObserver(([entry]) => setOnScreen(Boolean(entry?.isIntersecting)), {
+            threshold: 0.25,
+        });
+
+        observer.observe(video);
+
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const video = videoRef.current;
+
+        if (!video) return;
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (isActive && onScreen && !reduceMotion) {
+            void video.play().catch(() => undefined);
+        } else {
+            video.pause();
+        }
+    }, [isActive, onScreen, armed]);
+
+    return (
+        <video
+            ref={videoRef}
+            src={armed ? src : undefined}
+            preload={armed ? 'auto' : 'none'}
+            aria-label={title}
+            muted
+            loop
+            playsInline
+            disablePictureInPicture
+            className="size-full object-cover"
+        />
     );
 }
