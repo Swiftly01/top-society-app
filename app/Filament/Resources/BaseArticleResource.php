@@ -191,6 +191,11 @@ abstract class BaseArticleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Newest first: by publish date, falling back to creation date so
+            // drafts (which have no published_at yet) land at the top too
+            // instead of sinking to the bottom. Clicking any sortable column
+            // header still overrides this.
+            ->defaultSort(fn ($query) => $query->orderByRaw('COALESCE(published_at, created_at) DESC'))
             ->columns([
                 ImageColumn::make('featuredImage.url')
                     ->label('')
