@@ -149,16 +149,23 @@ class HomeController extends Controller
     }
 
     /**
+     * The single headline under the magazine slider in the hero's right rail.
+     * One story, picked at random from the most-read news articles on every
+     * page load, so the slot rotates instead of always showing the same
+     * piece. Stories already in the featured carousel are skipped so the
+     * hero never repeats itself. Empty hides the slot.
+     *
      * @return array<int, array<string, mixed>>
      */
     protected function secondaryHeadlines(): array
     {
-        return $this->articles->published(ContentType::NewsArticle, 10)
+        $pick = $this->articles->mostRead(ContentType::NewsArticle, 10)
             ->reject(fn ($article) => $article->is_featured)
-            ->take(3)
-            ->map(fn ($article) => ArticlePresenter::toCard($article))
-            ->values()
-            ->all();
+            ->take(5)
+            ->shuffle()
+            ->first();
+
+        return $pick ? [ArticlePresenter::toCard($pick)] : [];
     }
 
     /**
