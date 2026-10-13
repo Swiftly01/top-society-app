@@ -17,7 +17,7 @@ export function LatestReporting({
     categoryFilters,
     activeCategory,
     mostRead,
-    mostReadPromo,
+   mostReadPromo,
 }: LatestReportingProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@ export function LatestReporting({
                     )}
                 </div>
 
-                <MostReadSidebar items={mostRead} promo={mostReadPromo} />
+                 <MostReadSidebar items={mostRead} promo={mostReadPromo} /> 
             </div>
         </section>
     );

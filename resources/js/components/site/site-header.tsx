@@ -93,7 +93,7 @@ export function SiteHeader({ activeNav, nav = "primary" }: SiteHeaderProps) {
                             />
                         </Link>
                         <p className="hidden text-[11px] tracking-[0.2em] text-muted-foreground uppercase lg:block">
-                            Nigeria &amp; Global Journal of Authority
+                           People, Events and Places
                         </p>
                     </div>
 

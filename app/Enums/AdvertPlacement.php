@@ -12,14 +12,14 @@ enum AdvertPlacement: string
     /** The small slider above the magazine, in the homepage hero's right rail. */
     case HeroRail = 'hero_rail';
 
-    /** The full-width banner between "Latest Reporting" and the category cards. */
+    /** The 728×90 leaderboard banner under the featured story in the homepage hero. */
     case HomeBanner = 'home_banner';
 
     public function label(): string
     {
         return match ($this) {
             self::HeroRail => 'Homepage — hero sidebar',
-            self::HomeBanner => 'Homepage — banner below Latest Reporting',
+            self::HomeBanner => 'Homepage — banner under featured story',
         };
     }
 
@@ -42,7 +42,7 @@ enum AdvertPlacement: string
     {
         return match ($this) {
             self::HeroRail => '1200 × 675 px (16:9)',
-            self::HomeBanner => '1200 × 280 px (30:7 wide strip)',
+            self::HomeBanner => '728 × 90 px leaderboard (or 1456 × 180 px for sharper screens)',
         };
     }
 }

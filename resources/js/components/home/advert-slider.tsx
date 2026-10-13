@@ -12,6 +12,8 @@ interface AdvertSliderProps {
     aspectClassName?: string;
     /** Milliseconds between auto-advances. Set to 0 to disable autoplay. */
     intervalMs?: number;
+    /** Extra classes for the outer wrapper (e.g. `h-full` to fill a flex parent). */
+    className?: string;
 }
 
 /**
@@ -28,6 +30,7 @@ export function AdvertSlider({
     ariaLabel = 'Advertisements',
     aspectClassName = 'aspect-video',
     intervalMs = 5000,
+    className,
 }: AdvertSliderProps) {
     const { index, goTo, next, prev, containerProps } = useAutoSlide({ count: adverts.length, intervalMs });
 
@@ -35,7 +38,7 @@ export function AdvertSlider({
 
     return (
         <section
-            className="group/adverts relative"
+            className={cn('group/adverts relative', className)}
             role="region"
             aria-roledescription="carousel"
             aria-label={ariaLabel}

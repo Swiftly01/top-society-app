@@ -37,7 +37,7 @@ export function MostReadSidebar({ items, promo }: MostReadSidebarProps) {
                 </ol>
             </div>
 
-            <div className="rounded-sm border border-border bg-muted/40 p-5">
+            {/* <div className="rounded-sm border border-border bg-muted/40 p-5">
                 <span className="text-[10px] font-semibold tracking-widest text-red-600 uppercase">
                     {promo.label}
                 </span>
@@ -46,7 +46,7 @@ export function MostReadSidebar({ items, promo }: MostReadSidebarProps) {
                 <Button asChild variant="outline" size="sm" className="mt-4 border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
                     <Link href={promo.href}>{promo.ctaLabel}</Link>
                 </Button>
-            </div>
+            </div> */}
         </aside>
     );
 }

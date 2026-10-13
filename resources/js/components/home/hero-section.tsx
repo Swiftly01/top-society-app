@@ -11,19 +11,37 @@ interface HeroSectionProps {
     adverts?: Advert[];
     /** Empty hides the magazine slider. */
     magazines?: Magazine[];
+    /** Empty hides the banner under the featured carousel. */
+    bannerAdverts?: Advert[];
 }
 
-export function HeroSection({ featuredArticles, secondaryHeadlines, adverts = [], magazines = [] }: HeroSectionProps) {
+export function HeroSection({
+    featuredArticles,
+    secondaryHeadlines,
+    adverts = [],
+    magazines = [],
+    bannerAdverts = [],
+}: HeroSectionProps) {
     return (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="grid gap-8 lg:grid-cols-3">
-                {/* Featured story carousel */}
-                <div className="lg:col-span-2">
+                {/* Featured story carousel with the 728×90 leaderboard banner under it.
+                    The banner keeps its exact 728:90 shape at any width, so a 728×90
+                    (or 1456×180) image is never stretched or cropped. */}
+                <div className="flex min-w-0 flex-col gap-8 lg:col-span-2">
                     <HeroCarousel articles={featuredArticles} />
+
+                    <AdvertSlider
+                        adverts={bannerAdverts}
+                        ariaLabel="Sponsored banners"
+                        aspectClassName="aspect-[728/90]"
+                        intervalMs={6000}
+                    />
                 </div>
 
-                {/* Right rail: adverts on top, magazine issues below, then headlines */}
-                <div className="flex flex-col gap-5 lg:max-h-125 lg:overflow-y-auto lg:pr-1">
+                {/* Right rail: adverts on top, magazine issues below, then headlines.
+                    No inner scrollbar — it grows to its natural height. */}
+                <div className="flex flex-col gap-5">
                     <AdvertSlider adverts={adverts} />
                     <MagazineSlider magazines={magazines} />
 
