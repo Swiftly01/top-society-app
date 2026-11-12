@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ArticleResource\Pages;
 
 use App\Enums\MediaCollection;
+use App\Filament\Concerns\AutosavesDraft;
 use App\Filament\Concerns\HandlesMediaUploads;
 use App\Filament\Resources\ArticleResource;
 use App\Services\ArticleService;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreateArticle extends CreateRecord
 {
+    use AutosavesDraft;
     use HandlesMediaUploads;
 
     protected static string $resource = ArticleResource::class;
@@ -48,5 +50,8 @@ class CreateArticle extends CreateRecord
         $this->persistMediaFromTempPath($article, $this->pendingMedia['featured'] ?? null, MediaCollection::Featured);
         $this->persistManyMediaFromTempPaths($article, $this->pendingMedia['gallery'] ?? null, MediaCollection::Gallery);
         $this->persistMediaFromTempPath($article, $this->pendingMedia['video'] ?? null, MediaCollection::Video);
+
+        // Real save succeeded, so the autosaved draft is no longer needed.
+        $this->discardSavedDraft();
     }
 }

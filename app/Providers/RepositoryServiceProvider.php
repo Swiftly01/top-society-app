@@ -29,6 +29,8 @@ use App\Repositories\Eloquent\NewsletterSubscriptionRepository;
 use App\Services\Contracts\MediaStorageInterface;
 use App\Services\Storage\SupabaseStorageService;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Contracts\ContentDraftRepositoryInterface;
+use App\Repositories\Eloquent\ContentDraftRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -48,6 +50,7 @@ class RepositoryServiceProvider extends ServiceProvider
         NewsletterRepositoryInterface::class => NewsletterRepository::class,
         NewsletterSubscriptionRepositoryInterface::class => NewsletterSubscriptionRepository::class,
         NewsletterEditionRepositoryInterface::class => NewsletterEditionRepository::class,
+        ContentDraftRepositoryInterface::class => ContentDraftRepository::class,
         MediaStorageInterface::class => SupabaseStorageService::class,
     ];
 }

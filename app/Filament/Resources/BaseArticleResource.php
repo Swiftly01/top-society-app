@@ -27,6 +27,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -62,6 +63,9 @@ abstract class BaseArticleResource extends Resource
 
         return $schema->components([
             Hidden::make('type')->default(static::contentType()->value),
+
+            // Polls autosave and shows the last saved time.
+            View::make('filament.components.draft-autosave')->columnSpanFull(),
 
             Tabs::make('Article')
                 ->columnSpanFull()
