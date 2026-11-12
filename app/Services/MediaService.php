@@ -17,24 +17,37 @@ class MediaService
         protected MediaRepositoryInterface $mediaRepository,
     ) {}
 
-    /**
-     * Upload a file and attach it to a model in one step.
-     *
-     * For `MediaCollection::Featured` (a single-slot collection), any
-     * existing featured media is deleted first — both the Supabase file
-     * and the database row — so a model never accidentally ends up with
-     * two "featured" images.
-     */
+
     public function attach(Model $mediable, UploadedFile $file, MediaCollection $collection, ?string $altText = null): Media
     {
         if ($collection === MediaCollection::Featured) {
             $this->clearCollection($mediable, $collection);
         }
 
+        return $this->store($mediable, $file, $collection, $altText);
+    }
+
+    public function replace(Model $mediable, UploadedFile $file, MediaCollection $collection, ?string $altText = null): Media
+    {
+        $previous = $this->mediaRepository->findForMediableAndCollection($mediable, $collection);
+
+        // Upload first, so a failed upload leaves the old image untouched.
+        $media = $this->store($mediable, $file, $collection, $altText);
+
+        foreach ($previous as $item) {
+            $this->delete($item);
+        }
+
+        return $media;
+    }
+
+    // Uploads the file and records it, without touching existing media.
+    protected function store(Model $mediable, UploadedFile $file, MediaCollection $collection, ?string $altText = null): Media
+    {
         $directory = $this->directoryFor($mediable, $collection);
         $uploaded = $this->storage->upload($file, $directory);
 
-        return DB::transaction(fn () => $this->mediaRepository->create([
+        return DB::transaction(fn() => $this->mediaRepository->create([
             'mediable_type' => $mediable->getMorphClass(),
             'mediable_id' => $mediable->getKey(),
             'collection' => $collection->value,
@@ -49,13 +62,7 @@ class MediaService
         ]));
     }
 
-    /**
-     * Delete a single media item — from Supabase first, then the database
-     * row. Ordering matters: if the DB delete failed after a successful
-     * file delete we'd have a dangling record pointing at nothing, which
-     * is a strictly easier problem to notice and fix (a 404'd image) than
-     * an orphaned file silently costing storage forever.
-     */
+    
     public function delete(Media $media): bool
     {
         $this->storage->delete($media->path);
@@ -63,17 +70,6 @@ class MediaService
         return $this->mediaRepository->delete($media);
     }
 
-    /**
-     * Replace whatever's in a collection with the given file — the
-     * "featured image" picker calls this directly rather than composing
-     * clearCollection() + attach() itself.
-     */
-    public function replace(Model $mediable, UploadedFile $file, MediaCollection $collection, ?string $altText = null): Media
-    {
-        $this->clearCollection($mediable, $collection);
-
-        return $this->attach($mediable, $file, $collection, $altText);
-    }
 
     /**
      * @param  array<int, int>  $orderedIds
